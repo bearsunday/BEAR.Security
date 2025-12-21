@@ -51,23 +51,18 @@ final class CsrfPayload implements PayloadInterface
     public function getSuccessPatterns(): array
     {
         return [
-            // Success responses that shouldn't happen without valid CSRF token
-            '/success/i',
-            '/updated/i',
-            '/deleted/i',
-            '/created/i',
-            '/saved/i',
-            '/submitted/i',
-            '/completed/i',
-
-            // Redirect after successful action (often indicates success)
-            '/302 Found/i',
-            '/303 See Other/i',
-
-            // JSON success responses
+            // JSON success responses (more specific patterns to avoid false positives)
             '/"success"\s*:\s*true/i',
             '/"status"\s*:\s*"ok"/i',
+            '/"status"\s*:\s*"success"/i',
             '/"error"\s*:\s*false/i',
+            '/"result"\s*:\s*"ok"/i',
+
+            // Specific action confirmations with context
+            '/record\s+(has\s+been\s+)?(updated|deleted|created|saved)/i',
+            '/successfully\s+(updated|deleted|created|saved|submitted)/i',
+            '/operation\s+completed/i',
+            '/changes\s+saved/i',
         ];
     }
 

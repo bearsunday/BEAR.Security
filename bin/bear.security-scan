@@ -244,7 +244,11 @@ if (str_starts_with($options['format'], 'checklist')) {
 
 // Write output
 if ($options['output'] !== null) {
-    file_put_contents($options['output'], $output);
+    $bytesWritten = file_put_contents($options['output'], $output);
+    if ($bytesWritten === false) {
+        fwrite(STDERR, "Error: Failed to write output to: {$options['output']}\n");
+        exit(1);
+    }
 
     if (! $options['quiet']) {
         fwrite(STDOUT, "Report written to: {$options['output']}\n");

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace BEAR\Security\Detector;
 
+use BEAR\Security\VulnerabilityInterface;
+
 /**
  * Detects XML External Entity (XXE) vulnerabilities
  */
@@ -13,31 +15,31 @@ final class XxeDetector extends AbstractDetector
     protected array $patterns = [
         'XXE_SIMPLEXML_USER_INPUT' => [
             'pattern' => '/simplexml_load_string\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)\s*\[/i',
-            'severity' => 'CRITICAL',
+            'severity' => VulnerabilityInterface::SEVERITY_CRITICAL,
             'description' => 'XXE vulnerability - parsing user-controlled XML with simplexml_load_string',
-            'recommendation' => 'Disable external entities: libxml_disable_entity_loader(true) or use LIBXML_NOENT',
+            'recommendation' => 'Use libxml_disable_entity_loader(true) before PHP 8.0, or LIBXML_NONET to block network access',
         ],
         'XXE_SIMPLEXML_VAR' => [
             'pattern' => '/simplexml_load_string\s*\(\s*\$[a-zA-Z_][a-zA-Z0-9_]*\s*\)/i',
-            'severity' => 'MEDIUM',
+            'severity' => VulnerabilityInterface::SEVERITY_MEDIUM,
             'description' => 'Potential XXE - simplexml_load_string with variable input',
             'recommendation' => 'Disable external entities before parsing XML from untrusted sources',
         ],
         'XXE_DOMDOCUMENT_LOAD' => [
             'pattern' => '/\$[a-zA-Z_][a-zA-Z0-9_]*\s*->\s*load(XML|HTML)\s*\(\s*\$_(GET|POST|REQUEST)/i',
-            'severity' => 'CRITICAL',
+            'severity' => VulnerabilityInterface::SEVERITY_CRITICAL,
             'description' => 'XXE vulnerability - DOMDocument loading user-controlled XML',
-            'recommendation' => 'Use $doc->loadXML($xml, LIBXML_NOENT | LIBXML_DTDLOAD) to disable entities',
+            'recommendation' => 'Use $doc->loadXML($xml, LIBXML_NONET | LIBXML_DTDATTR) to prevent XXE. Avoid LIBXML_NOENT as it expands entities.',
         ],
         'XXE_XMLREADER' => [
             'pattern' => '/XMLReader::open\s*\(\s*\$_(GET|POST|REQUEST)/i',
-            'severity' => 'CRITICAL',
+            'severity' => VulnerabilityInterface::SEVERITY_CRITICAL,
             'description' => 'XXE vulnerability - XMLReader with user-controlled input',
             'recommendation' => 'Disable external entities before parsing',
         ],
         'XXE_ENTITY_LOADER_ENABLED' => [
             'pattern' => '/libxml_disable_entity_loader\s*\(\s*false\s*\)/i',
-            'severity' => 'HIGH',
+            'severity' => VulnerabilityInterface::SEVERITY_HIGH,
             'description' => 'External entity loader explicitly enabled - XXE risk',
             'recommendation' => 'Keep entity loader disabled: libxml_disable_entity_loader(true)',
         ],
@@ -45,6 +47,6 @@ final class XxeDetector extends AbstractDetector
 
     public function getName(): string
     {
-        return 'XxeDetector';
+        return 'XXE Detector';
     }
 }

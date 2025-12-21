@@ -42,11 +42,18 @@ class Admin extends ResourceObject
     {
         // Looks like safe prepared statement, but...
         // 'role' field should not be user-controllable
+        // Allowed fields whitelist prevents SQL injection via field names
+        $allowedFields = ['name', 'email', 'role', 'status'];
         $fields = [];
         $values = [];
         foreach ($data as $key => $value) {
-            $fields[] = "{$key} = ?";
-            $values[] = $value;
+            if (in_array($key, $allowedFields, true)) {
+                $fields[] = "{$key} = ?";
+                $values[] = $value;
+            }
+        }
+        if ($fields === []) {
+            return $this;
         }
         $values[] = $userId;
 

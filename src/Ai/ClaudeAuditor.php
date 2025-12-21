@@ -10,7 +10,9 @@ use RuntimeException;
 use function array_map;
 use function count;
 use function curl_close;
+use function curl_error;
 use function curl_exec;
+use function curl_getinfo;
 use function curl_init;
 use function curl_setopt;
 use function getenv;
@@ -18,10 +20,13 @@ use function is_string;
 use function json_decode;
 use function json_encode;
 
+use const CURLINFO_HTTP_CODE;
+use const CURLOPT_CONNECTTIMEOUT;
 use const CURLOPT_HTTPHEADER;
 use const CURLOPT_POST;
 use const CURLOPT_POSTFIELDS;
 use const CURLOPT_RETURNTRANSFER;
+use const CURLOPT_TIMEOUT;
 use const CURLOPT_URL;
 use const JSON_THROW_ON_ERROR;
 
@@ -100,6 +105,10 @@ final class ClaudeAuditor implements AuditorInterface
         ];
 
         $ch = curl_init();
+        if ($ch === false) {
+            throw new RuntimeException('Failed to initialize cURL');
+        }
+
         curl_setopt($ch, CURLOPT_URL, self::API_URL);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -109,19 +118,27 @@ final class ClaudeAuditor implements AuditorInterface
             'x-api-key: ' . $this->apiKey,
             'anthropic-version: 2023-06-01',
         ]);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 300);
 
         $response = curl_exec($ch);
+        $error = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        if (! is_string($response)) {
-            throw new RuntimeException('API request failed');
+        if (! is_string($response) || $response === '') {
+            throw new RuntimeException('API request failed: ' . ($error !== '' ? $error : 'empty response'));
+        }
+
+        if ($httpCode >= 400) {
+            throw new RuntimeException("API request failed with HTTP {$httpCode}: {$response}");
         }
 
         /** @var array{content: array<array{text: string}>, usage: array{input_tokens: int, output_tokens: int}} $data */
         $data = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
 
-        $inputTokens = $data['usage']['input_tokens'] ?? 0;
-        $outputTokens = $data['usage']['output_tokens'] ?? 0;
+        $inputTokens = $data['usage']['input_tokens'];
+        $outputTokens = $data['usage']['output_tokens'];
 
         $this->tokenTracker->record('api_call', $inputTokens, $outputTokens);
 

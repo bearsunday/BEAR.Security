@@ -10,6 +10,7 @@ use BEAR\Security\VulnerabilityInterface;
 use function array_key_exists;
 use function preg_match;
 use function str_replace;
+use function str_starts_with;
 use function strtolower;
 use function strtoupper;
 
@@ -90,8 +91,16 @@ final class SecurityHeadersAnalyzer
             $normalizedHeaders[strtolower($name)] = $value;
         }
 
+        // Determine if URL is HTTPS
+        $isHttps = str_starts_with(strtolower($url), 'https://');
+
         // Check for missing required headers
         foreach (self::REQUIRED_HEADERS as $header => $config) {
+            // Skip HSTS check for non-HTTPS URLs (HSTS only applies to HTTPS)
+            if ($header === 'strict-transport-security' && ! $isHttps) {
+                continue;
+            }
+
             if (! array_key_exists($header, $normalizedHeaders)) {
                 $vulnerabilities[] = new Vulnerability(
                     'MISSING_SECURITY_HEADER_' . strtoupper(str_replace('-', '_', $header)),

@@ -67,19 +67,9 @@ final class RemoteFileInclusionPayload implements PayloadInterface
             '/uid=\d+.*gid=\d+/i',
             '/root:.*:0:0:/i',
 
-            // Error messages indicating file inclusion attempt
-            '/failed to open stream/i',
-            '/include\(\): Failed opening/i',
-            '/require\(\): Failed opening/i',
-            '/include_once\(\): Failed opening/i',
-            '/require_once\(\): Failed opening/i',
-            '/URL file-access is disabled/i',
-            '/allow_url_include/i',
-            '/allow_url_fopen/i',
-
-            // Wrapper errors
-            '/Unable to find the wrapper/i',
-            '/wrapper is disabled/i',
+            // Note: Error messages like "failed to open stream", "URL file-access is disabled",
+            // etc. are NOT success indicators - they indicate the attack was blocked.
+            // These patterns should not be used for vulnerability detection.
         ];
     }
 

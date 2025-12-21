@@ -188,7 +188,9 @@ final class SecurityChecklistReport
             'checklist' => $this->checklist,
         ];
 
-        return (string) json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+        return $json === false ? '{}' : $json;
     }
 
     private function toHtml(): string

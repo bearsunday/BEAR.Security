@@ -12,6 +12,7 @@ use function dirname;
 use function file_exists;
 use function file_get_contents;
 use function glob;
+use function implode;
 use function is_dir;
 use function json_decode;
 use function json_encode;
@@ -130,7 +131,7 @@ PROMPT;
     /**
      * Parse AI response JSON
      *
-     * @return array{scan_result: array{files_scanned: int, vulnerabilities_found: int}, vulnerabilities: list<array{file: string, line: int, type: string, severity: string, detection: string, description: string}>}
+     * @return array{scan_result: array{files_scanned: int, vulnerabilities_found: int}, vulnerabilities: list<array{file: string, line: int, type: string, severity: string, detection: string, description: string, code?: string}>}
      */
     public function parseResponse(string $response): array
     {
@@ -144,7 +145,7 @@ PROMPT;
         $response = str_replace(["\r\n", "\r"], "\n", $response);
 
         try {
-            /** @var array{scan_result: array{files_scanned: int, vulnerabilities_found: int}, vulnerabilities: list<array{file: string, line: int, type: string, severity: string, detection: string, description: string}>} */
+            /** @var array{scan_result: array{files_scanned: int, vulnerabilities_found: int}, vulnerabilities: list<array{file: string, line: int, type: string, severity: string, detection: string, description: string, code?: string}>} */
             return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new RuntimeException('Failed to parse AI response as JSON: ' . $e->getMessage());

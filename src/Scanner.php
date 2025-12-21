@@ -22,11 +22,16 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 
+use RuntimeException;
+
 use function file_get_contents;
 use function in_array;
+use function is_dir;
+use function is_readable;
 use function microtime;
 use function pathinfo;
 use function preg_match;
+use function sprintf;
 
 use const PATHINFO_EXTENSION;
 
@@ -110,6 +115,14 @@ final class Scanner
      */
     public function scanDirectory(string $directory): ScanResult
     {
+        if (! is_dir($directory)) {
+            throw new RuntimeException(sprintf('Directory not found: %s', $directory));
+        }
+
+        if (! is_readable($directory)) {
+            throw new RuntimeException(sprintf('Directory not readable: %s', $directory));
+        }
+
         $startTime = microtime(true);
         $result = new ScanResult();
 

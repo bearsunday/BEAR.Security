@@ -8,8 +8,12 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 
+use FilesystemIterator;
+
 use function file_get_contents;
 use function in_array;
+use function is_dir;
+use function is_readable;
 use function pathinfo;
 use function preg_match;
 
@@ -39,15 +43,26 @@ final class FileCollector
      */
     public function collect(string $directory): array
     {
+        if (! is_dir($directory)) {
+            throw new \InvalidArgumentException("Directory does not exist: {$directory}");
+        }
+
+        if (! is_readable($directory)) {
+            throw new \InvalidArgumentException("Directory is not readable: {$directory}");
+        }
+
         $files = [];
 
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($directory),
+            new RecursiveDirectoryIterator(
+                $directory,
+                FilesystemIterator::SKIP_DOTS,
+            ),
         );
 
         /** @var SplFileInfo $file */
         foreach ($iterator as $file) {
-            if (! $file->isFile()) {
+            if (! $file->isFile() || $file->isLink()) {
                 continue;
             }
 
