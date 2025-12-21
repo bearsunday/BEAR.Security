@@ -17,7 +17,7 @@ final class XxeDetector extends AbstractDetector
             'pattern' => '/simplexml_load_string\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)\s*\[/i',
             'severity' => VulnerabilityInterface::SEVERITY_CRITICAL,
             'description' => 'XXE vulnerability - parsing user-controlled XML with simplexml_load_string',
-            'recommendation' => 'Disable external entities: libxml_disable_entity_loader(true) or use LIBXML_NOENT',
+            'recommendation' => 'Use libxml_disable_entity_loader(true) before PHP 8.0, or LIBXML_NONET to block network access',
         ],
         'XXE_SIMPLEXML_VAR' => [
             'pattern' => '/simplexml_load_string\s*\(\s*\$[a-zA-Z_][a-zA-Z0-9_]*\s*\)/i',
@@ -29,7 +29,7 @@ final class XxeDetector extends AbstractDetector
             'pattern' => '/\$[a-zA-Z_][a-zA-Z0-9_]*\s*->\s*load(XML|HTML)\s*\(\s*\$_(GET|POST|REQUEST)/i',
             'severity' => VulnerabilityInterface::SEVERITY_CRITICAL,
             'description' => 'XXE vulnerability - DOMDocument loading user-controlled XML',
-            'recommendation' => 'Use $doc->loadXML($xml, LIBXML_NOENT | LIBXML_DTDLOAD) to disable entities',
+            'recommendation' => 'Use $doc->loadXML($xml, LIBXML_NONET | LIBXML_DTDATTR) to prevent XXE. Avoid LIBXML_NOENT as it expands entities.',
         ],
         'XXE_XMLREADER' => [
             'pattern' => '/XMLReader::open\s*\(\s*\$_(GET|POST|REQUEST)/i',
