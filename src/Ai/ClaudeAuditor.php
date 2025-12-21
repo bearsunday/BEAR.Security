@@ -137,8 +137,8 @@ final class ClaudeAuditor implements AuditorInterface
         /** @var array{content: array<array{text: string}>, usage: array{input_tokens: int, output_tokens: int}} $data */
         $data = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
 
-        $inputTokens = $data['usage']['input_tokens'] ?? 0;
-        $outputTokens = $data['usage']['output_tokens'] ?? 0;
+        $inputTokens = $data['usage']['input_tokens'];
+        $outputTokens = $data['usage']['output_tokens'];
 
         $this->tokenTracker->record('api_call', $inputTokens, $outputTokens);
 

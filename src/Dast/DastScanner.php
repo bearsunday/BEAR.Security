@@ -28,10 +28,13 @@ use function sprintf;
 use function stream_context_create;
 use function strlen;
 use function strpos;
+use function str_contains;
 use function trim;
 use function urlencode;
 
 use const FILE_APPEND;
+
+use InvalidArgumentException;
 use const PHP_EOL;
 
 /**
@@ -73,9 +76,16 @@ final class DastScanner
 
     /**
      * Set log file for request/response logging
+     *
+     * @throws InvalidArgumentException If path contains path traversal attempt
      */
     public function setLogFile(string $logFile): self
     {
+        // Prevent path traversal attacks
+        if (str_contains($logFile, '..')) {
+            throw new InvalidArgumentException('Log file path cannot contain path traversal sequences');
+        }
+
         $this->logFile = $logFile;
 
         return $this;
@@ -237,12 +247,14 @@ final class DastScanner
             ],
         ]);
 
-        $body = @file_get_contents($url, false, $context);
+        $body = file_get_contents($url, false, $context);
 
         // Parse response code from headers
+        // Note: $http_response_header is a special variable populated by file_get_contents
         $code = 0;
         $responseHeaders = [];
-        if ($http_response_header !== []) {
+        /** @phpstan-ignore isset.variable (special variable created by file_get_contents) */
+        if (isset($http_response_header) && $http_response_header !== []) {
             foreach ($http_response_header as $header) {
                 if (preg_match('/^HTTP\/[\d.]+ (\d+)/', $header, $matches)) {
                     $code = (int) $matches[1];
