@@ -107,7 +107,7 @@ final class SarifOutput implements OutputInterface
             'name' => $name,
             'shortDescription' => ['text' => $name],
             'fullDescription' => ['text' => "Detects {$name} vulnerabilities (OWASP {$owaspCategory})"],
-            'helpUri' => "https://owasp.org/Top10/A{$owaspCategory}/",
+            'helpUri' => "https://owasp.org/Top10/{$owaspCategory}/",
             'properties' => [
                 'tags' => ['security', 'owasp-' . strtolower($owaspCategory), $cwe],
             ],

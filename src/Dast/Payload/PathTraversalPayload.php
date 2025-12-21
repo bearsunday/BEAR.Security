@@ -61,31 +61,30 @@ final class PathTraversalPayload implements PayloadInterface
     public function getSuccessPatterns(): array
     {
         return [
-            // /etc/passwd content
+            // /etc/passwd content (successful file read)
             '/root:.*:0:0:/i',
             '/daemon:.*:\d+:\d+:/i',
             '/nobody:.*:\d+:\d+:/i',
             '/www-data:.*:\d+:\d+:/i',
 
-            // Windows hosts file
-            '/localhost/i',
-            '/127\.0\.0\.1/i',
+            // Windows hosts file content
+            '/localhost\s+127\.0\.0\.1/i',
+            '/127\.0\.0\.1\s+localhost/i',
 
-            // Windows win.ini
+            // Windows win.ini content
             '/\[fonts\]/i',
             '/\[extensions\]/i',
 
-            // PHP source code exposed
+            // PHP source code exposed (successful file read)
             '/<\?php/i',
             '/<\?=/i',
 
             // Base64 encoded PHP
             '/PD9waHA/i',  // Base64 of "<?php"
 
-            // Error messages indicating path issues
-            '/failed to open stream/i',
-            '/No such file or directory/i',
-            '/Permission denied/i',
+            // Note: Error messages like "failed to open stream", "No such file or directory",
+            // and "Permission denied" are NOT success indicators - they indicate the attack
+            // failed. These patterns should not be used for vulnerability detection.
         ];
     }
 

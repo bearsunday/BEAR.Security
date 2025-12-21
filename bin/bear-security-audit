@@ -10,11 +10,35 @@ use BEAR\Security\Output\JsonOutput;
 use BEAR\Security\Output\SarifOutput;
 
 use function count;
+use function dirname;
+use function file_exists;
 use function file_put_contents;
+use function fwrite;
 use function in_array;
 use function is_dir;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+use const STDERR;
+
+// Find autoloader
+$autoloadPaths = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+    __DIR__ . '/../../autoload.php',
+];
+
+$autoloadFound = false;
+foreach ($autoloadPaths as $autoloadPath) {
+    if (file_exists($autoloadPath)) {
+        require_once $autoloadPath;
+        $autoloadFound = true;
+        break;
+    }
+}
+
+if (! $autoloadFound) {
+    fwrite(STDERR, "Error: Could not find autoloader. Run 'composer install' first.\n");
+    exit(1);
+}
 
 // Parse arguments
 $args = $argv;
@@ -93,7 +117,14 @@ try {
     }
 
     // Token usage summary
-    echo "\n" . $result->tokenTracker->getSummary() . "\n";
+    $tokenSummary = $result->tokenTracker->getSummary();
+    echo "\n" . $tokenSummary . "\n";
+
+    // Write token usage to file for CI/CD integration
+    $tokenFile = $output !== null
+        ? dirname($output) . '/ai-audit-tokens.txt'
+        : 'ai-audit-tokens.txt';
+    file_put_contents($tokenFile, $tokenSummary);
 
     // Exit code: 1 if vulnerabilities found
     exit(count($result->vulnerabilities) > 0 ? 1 : 0);
