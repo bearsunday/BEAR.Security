@@ -249,6 +249,15 @@ final class DastScanner
 
         $body = file_get_contents($url, false, $context);
 
+        // Handle request failure
+        if ($body === false) {
+            return [
+                'code' => 0,
+                'body' => '',
+                'headers' => [],
+            ];
+        }
+
         // Parse response code from headers
         // Note: $http_response_header is a special variable populated by file_get_contents
         $code = 0;
@@ -267,7 +276,7 @@ final class DastScanner
 
         return [
             'code' => $code,
-            'body' => $body ?: '',
+            'body' => $body,
             'headers' => $responseHeaders,
         ];
     }
