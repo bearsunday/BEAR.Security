@@ -46,7 +46,7 @@ final class CryptographicFailuresDetector extends AbstractDetector
 
         // Insecure random number generation
         'INSECURE_RANDOM_RAND' => [
-            'pattern' => '/\brand\s*\(\s*\)/i',
+            'pattern' => '/\brand\s*\(/i',
             'severity' => VulnerabilityInterface::SEVERITY_HIGH,
             'description' => 'rand() is not cryptographically secure',
             'recommendation' => 'Use random_int() or random_bytes() for cryptographic purposes',

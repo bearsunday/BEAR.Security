@@ -16,7 +16,9 @@ use function file_exists;
 use function file_put_contents;
 use function fwrite;
 use function implode;
+use function getenv;
 use function is_dir;
+use function is_string;
 use function str_repeat;
 use function str_starts_with;
 
@@ -93,6 +95,13 @@ if ($path === null) {
 if (!is_dir($path)) {
     fwrite(STDERR, "Error: Path does not exist: {$path}\n");
     exit(1);
+}
+
+$apiKey = getenv('ANTHROPIC_API_KEY');
+if (! is_string($apiKey) || $apiKey === '') {
+    fwrite(STDERR, "Error: ANTHROPIC_API_KEY environment variable is required\n");
+    fwrite(STDERR, "Set it with: export ANTHROPIC_API_KEY=sk-ant-...\n");
+    exit(2);
 }
 
 try {

@@ -36,7 +36,8 @@
         }
     },
     "bin": [
-        "bin/bear.security-scan"
+        "bin/bear.security-scan",
+        "bin/bear-security-audit"
     ],
     "scripts": {
         "bin": "echo 'bin not installed'",

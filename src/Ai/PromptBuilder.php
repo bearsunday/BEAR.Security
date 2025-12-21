@@ -145,7 +145,7 @@ PROMPT;
         $response = str_replace(["\r\n", "\r"], "\n", $response);
 
         try {
-            /** @var array{scan_result: array{files_scanned: int, vulnerabilities_found: int}, vulnerabilities: list<array{file: string, line: int, type: string, severity: string, detection: string, description: string}>} */
+            /** @var array{scan_result: array{files_scanned: int, vulnerabilities_found: int}, vulnerabilities: list<array{file: string, line: int, type: string, severity: string, detection: string, description: string, code?: string}>} */
             return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             throw new RuntimeException('Failed to parse AI response as JSON: ' . $e->getMessage());
