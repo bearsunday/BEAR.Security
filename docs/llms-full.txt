@@ -15,7 +15,7 @@
 ```
 BEAR\Security
 ├── Scanner              # Main scanner class
-├── Detector/            # SAST vulnerability detectors (14 total)
+├── Detector/            # SAST vulnerability detectors
 │   ├── AbstractDetector
 │   ├── SqlInjectionDetector
 │   ├── XssDetector
@@ -26,22 +26,10 @@ BEAR\Security
 │   ├── CryptographicFailuresDetector
 │   ├── InsecureDeserializationDetector
 │   ├── DangerousFunctionDetector
-│   ├── SessionSecurityDetector
-│   ├── OpenRedirectDetector
-│   ├── XxeDetector
-│   ├── HeaderInjectionDetector
-│   └── WeakRandomDetector
-├── Ai/                  # AI-powered analysis
-│   ├── ClaudeAuditor
-│   ├── PromptBuilder
-│   ├── FileCollector
-│   ├── TokenTracker
-│   ├── AuditResult
-│   └── AuditorInterface
+│   └── SessionSecurityDetector
 ├── Dast/                # Dynamic analysis
 │   ├── DastScanner
 │   ├── SecurityTest
-│   ├── SecurityWorkflowTest
 │   ├── Analyzer/
 │   │   ├── ResponseAnalyzer
 │   │   └── SecurityHeadersAnalyzer
@@ -54,8 +42,7 @@ BEAR\Security
 │   ├── SarifOutput
 │   └── OutputInterface
 ├── Report/
-│   ├── SecurityChecklistReport
-│   └── TemplateRenderer
+│   └── SecurityChecklistReport
 ├── ScanResult
 ├── Vulnerability
 ├── VulnerabilityInterface
@@ -79,8 +66,6 @@ BEAR\Security
 
 ## CLI Usage
 
-### SAST Scanner
-
 ```bash
 # Basic scan
 vendor/bin/bear.security-scan src
@@ -102,24 +87,6 @@ vendor/bin/bear.security-scan src --exclude='/vendor/' --exclude='/tests/'
 # Output to file
 vendor/bin/bear.security-scan src --format=json --output=report.json
 ```
-
-### AI Auditor (requires ANTHROPIC_API_KEY)
-
-```bash
-# AI-powered deep analysis
-ANTHROPIC_API_KEY=sk-xxx vendor/bin/bear-security-audit src
-
-# Output formats
-vendor/bin/bear-security-audit src --format=json
-vendor/bin/bear-security-audit src --format=sarif --output=results.sarif
-```
-
-AI Auditor detects context-aware vulnerabilities:
-- IDOR (Insecure Direct Object Reference)
-- Mass Assignment
-- Race Conditions
-- Timing Attacks
-- Business Logic Flaws
 
 ## Programmatic Usage
 
@@ -202,22 +169,22 @@ vendor/bin/psalm --taint-analysis
 ```
 bear/security/
 ├── bin/
-│   ├── bear.security-scan    # SAST CLI
-│   └── bear-security-audit   # AI Audit CLI
+│   └── bear.security-scan    # CLI entry point
 ├── src/
 │   ├── Scanner.php           # Main scanner
 │   ├── ScanResult.php        # Scan results container
 │   ├── Vulnerability.php     # Vulnerability entity
-│   ├── Detector/             # Pattern-based detectors (14)
-│   ├── Ai/                   # AI-powered analysis
+│   ├── Detector/             # Pattern-based detectors
 │   ├── Dast/                 # Dynamic testing
 │   ├── Analyzer/             # Additional analyzers
 │   ├── Output/               # Output formatters
 │   └── Report/               # Report generators
 ├── tests/
 ├── docs/
-├── SKILL.md                  # AI auditor knowledge base
-├── CLAUDE.md                 # Claude Code guidance
+│   ├── github-actions.md
+│   ├── comparison-vaddy.md
+│   ├── llms.txt
+│   └── llms-full.txt
 ├── composer.json
 ├── psalm.xml
 ├── phpstan.neon
@@ -233,9 +200,6 @@ Dev:
 - phpunit/phpunit
 - vimeo/psalm
 - phpstan/phpstan
-
-Optional:
-- ANTHROPIC_API_KEY (for AI Audit)
 
 Suggested:
 - bear/devtools (for DAST with HTTP workflow tests)
