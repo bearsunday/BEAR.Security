@@ -41,6 +41,6 @@ final class HeaderInjectionDetector extends AbstractDetector
 
     public function getName(): string
     {
-        return 'HeaderInjectionDetector';
+        return 'Header Injection Detector';
     }
 }

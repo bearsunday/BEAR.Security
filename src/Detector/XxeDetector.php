@@ -47,6 +47,6 @@ final class XxeDetector extends AbstractDetector
 
     public function getName(): string
     {
-        return 'XxeDetector';
+        return 'XXE Detector';
     }
 }

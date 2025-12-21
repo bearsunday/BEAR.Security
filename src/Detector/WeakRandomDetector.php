@@ -53,6 +53,6 @@ final class WeakRandomDetector extends AbstractDetector
 
     public function getName(): string
     {
-        return 'WeakRandomDetector';
+        return 'Weak Random Detector';
     }
 }

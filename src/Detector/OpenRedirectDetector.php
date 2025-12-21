@@ -35,6 +35,6 @@ final class OpenRedirectDetector extends AbstractDetector
 
     public function getName(): string
     {
-        return 'OpenRedirectDetector';
+        return 'Open Redirect Detector';
     }
 }
