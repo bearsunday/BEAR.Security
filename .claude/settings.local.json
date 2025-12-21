@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "xdebug"
+  ],
+  "enableAllProjectMcpServers": true
+}
