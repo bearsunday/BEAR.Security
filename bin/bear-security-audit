@@ -9,13 +9,16 @@ use BEAR\Security\Ai\ClaudeAuditor;
 use BEAR\Security\Output\JsonOutput;
 use BEAR\Security\Output\SarifOutput;
 
+use function array_shift;
 use function count;
 use function dirname;
 use function file_exists;
 use function file_put_contents;
 use function fwrite;
-use function in_array;
+use function implode;
 use function is_dir;
+use function str_repeat;
+use function str_starts_with;
 
 use const STDERR;
 

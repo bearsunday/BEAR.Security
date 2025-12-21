@@ -12,6 +12,7 @@ use function count;
 use function curl_close;
 use function curl_error;
 use function curl_exec;
+use function curl_getinfo;
 use function curl_init;
 use function curl_setopt;
 use function getenv;
@@ -19,6 +20,7 @@ use function is_string;
 use function json_decode;
 use function json_encode;
 
+use const CURLINFO_HTTP_CODE;
 use const CURLOPT_CONNECTTIMEOUT;
 use const CURLOPT_HTTPHEADER;
 use const CURLOPT_POST;
@@ -121,10 +123,15 @@ final class ClaudeAuditor implements AuditorInterface
 
         $response = curl_exec($ch);
         $error = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         if (! is_string($response) || $response === '') {
             throw new RuntimeException('API request failed: ' . ($error !== '' ? $error : 'empty response'));
+        }
+
+        if ($httpCode >= 400) {
+            throw new RuntimeException("API request failed with HTTP {$httpCode}: {$response}");
         }
 
         /** @var array{content: array<array{text: string}>, usage: array{input_tokens: int, output_tokens: int}} $data */
