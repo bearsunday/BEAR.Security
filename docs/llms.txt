@@ -1,0 +1,38 @@
+# BEAR.Security
+
+> Security scanner for BEAR.Sunday applications with OWASP Top 10 compliance
+
+## Overview
+
+BEAR.Security is a PHP security vulnerability scanner designed for BEAR.Sunday framework applications. It provides static (SAST), dynamic (DAST), and AI-powered application security testing with 100% OWASP Top 10 coverage.
+
+## Quick Start
+
+```bash
+composer require --dev bear/security
+vendor/bin/bear.security-scan src
+```
+
+## Key Features
+
+- 14 SAST detectors (SQL Injection, XSS, Command Injection, Path Traversal, etc.)
+- DAST with Security Headers analysis
+- AI Auditor via Claude API (IDOR, Race Conditions, Mass Assignment)
+- OWASP Top 10 checklist reports
+- SARIF output for GitHub Security integration
+- Psalm taint analysis enabled
+
+## Documentation
+
+- README: /README.md
+- GitHub Actions: /docs/github-actions.md
+- VADDY Comparison: /docs/comparison-vaddy.md
+
+## Main Components
+
+- Scanner: src/Scanner.php
+- Detectors: src/Detector/ (14 detectors)
+- DAST: src/Dast/
+- AI Auditor: src/Ai/
+- Reports: src/Report/
+- CLI: bin/bear.security-scan, bin/bear-security-audit
