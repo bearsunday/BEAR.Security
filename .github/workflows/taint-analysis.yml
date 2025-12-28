@@ -1,0 +1,79 @@
+name: Taint Analysis
+
+on:
+  push:
+    branches: [1.x, main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  taint-analysis:
+    name: Psalm Taint Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist
+
+      - name: Verify Vulnerable code is detected
+        run: |
+          OUTPUT=$(./vendor/bin/psalm --taint-analysis demo/src/Resource/App/Vulnerable/ 2>&1) || true
+
+          PASS=true
+
+          # Check for expected detections
+          if echo "$OUTPUT" | grep -q "TaintedSql"; then
+            echo "✓ TaintedSql detected"
+          else
+            echo "✗ TaintedSql NOT detected"
+            PASS=false
+          fi
+
+          if echo "$OUTPUT" | grep -q "TaintedHtml"; then
+            echo "✓ TaintedHtml detected"
+          else
+            echo "✗ TaintedHtml NOT detected"
+            PASS=false
+          fi
+
+          if echo "$OUTPUT" | grep -q "TaintedShell"; then
+            echo "✓ TaintedShell detected"
+          else
+            echo "✗ TaintedShell NOT detected"
+            PASS=false
+          fi
+
+          if echo "$OUTPUT" | grep -q "TaintedSSRF\|TaintedCustom"; then
+            echo "✓ SSRF-related taint detected"
+          else
+            echo "✗ SSRF-related taint NOT detected"
+            PASS=false
+          fi
+
+          if [ "$PASS" = false ]; then
+            echo ""
+            echo "Some expected vulnerabilities were not detected!"
+            exit 1
+          fi
+
+          echo ""
+          echo "All expected vulnerabilities detected!"
+
+      - name: Verify Safe code has no errors
+        run: |
+          OUTPUT=$(./vendor/bin/psalm --taint-analysis demo/src/Resource/App/Safe/ 2>&1)
+          if echo "$OUTPUT" | grep -q "No errors found"; then
+            echo "✓ Safe code has no taint errors"
+          else
+            echo "✗ Safe code has unexpected errors:"
+            echo "$OUTPUT"
+            exit 1
+          fi
