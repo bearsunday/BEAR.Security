@@ -2,10 +2,20 @@
 document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   var path = window.location.pathname;
-  if (e.key === 'j' && !path.includes('/ja/')) {
-    window.location.href = path.replace('/en/', '/ja/').replace(/\/$/, '/ja/');
-  } else if (e.key === 'e' && !path.includes('/en/')) {
-    window.location.href = path.replace('/ja/', '/en/');
+  var base = '/BEAR.Security';
+
+  if (e.key === 'j') {
+    if (path.includes('/en/')) {
+      window.location.href = path.replace('/en/', '/ja/');
+    } else if (!path.includes('/ja/')) {
+      window.location.href = base + '/issues/ja/';
+    }
+  } else if (e.key === 'e') {
+    if (path.includes('/ja/')) {
+      window.location.href = path.replace('/ja/', '/en/');
+    } else if (!path.includes('/en/')) {
+      window.location.href = base + '/issues/en/';
+    }
   }
 });
 </script>
