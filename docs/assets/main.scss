@@ -44,6 +44,17 @@ blockquote {
   line-height: 1.6;
 }
 
+.github-link {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  color: #333;
+}
+
+.github-link:hover {
+  color: #000;
+}
+
 /* ===========================
    php.net inspired style Syntax (from BEAR.Sunday manual)
    =========================== */
