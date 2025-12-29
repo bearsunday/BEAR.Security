@@ -1,5 +1,6 @@
 ---
 layout: default
+nav_exclude: true
 title: 問題タイプ
 lang: ja
 ---

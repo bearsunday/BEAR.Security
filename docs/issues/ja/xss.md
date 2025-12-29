@@ -1,5 +1,6 @@
 ---
 layout: default
+nav_exclude: true
 title: XSS
 lang: ja
 ---
