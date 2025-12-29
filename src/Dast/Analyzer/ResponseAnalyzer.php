@@ -9,10 +9,8 @@ use BEAR\Security\Vulnerability;
 use BEAR\Security\VulnerabilityInterface;
 
 use function preg_match;
-use function preg_replace;
 use function sprintf;
 use function strlen;
-use function strtoupper;
 use function substr;
 
 /**
@@ -34,7 +32,7 @@ final class ResponseAnalyzer
         foreach ($payload->getSuccessPatterns() as $pattern) {
             if (preg_match($pattern, $responseBody)) {
                 return new Vulnerability(
-                    sprintf('DAST_%s', $this->sanitizeTypeName($payload->getName())),
+                    $payload->getType(),
                     $payload->getSeverity(),
                     $url,
                     0, // Line number not applicable for DAST
@@ -120,14 +118,6 @@ final class ResponseAnalyzer
         }
 
         return null;
-    }
-
-    /**
-     * Sanitize payload type name for use as vulnerability type
-     */
-    private function sanitizeTypeName(string $name): string
-    {
-        return strtoupper(preg_replace('/[^A-Za-z0-9]+/', '_', $name) ?? $name);
     }
 
     /**

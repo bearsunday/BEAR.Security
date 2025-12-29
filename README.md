@@ -81,7 +81,7 @@ vendor/bin/bear.security-scan src --exclude='/vendor/' --exclude='/tests/'
 | CSRF | CWE-352 | MEDIUM | Cross-site request forgery |
 | CryptographicFailures | CWE-327 | HIGH | Weak hash, hardcoded secrets |
 | InsecureDeserialization | CWE-502 | CRITICAL | Unsafe unserialize() |
-| DangerousFunctions | CWE-94 | HIGH | eval(), exec(), system() |
+| DangerousFunction | CWE-94 | HIGH | eval(), exec(), system() |
 | SessionSecurity | CWE-384 | MEDIUM | Session fixation |
 | OpenRedirect | CWE-601 | HIGH | Unvalidated redirects |
 | XXE | CWE-611 | HIGH | XML External Entity |
@@ -106,6 +106,49 @@ ANTHROPIC_API_KEY=sk-xxx vendor/bin/bear-security-audit src
 ```
 
 ### DAST (Dynamic Analysis)
+
+Automatic endpoint discovery and security testing for BEAR.Sunday applications.
+
+```bash
+./bin/bear-security-dast "MyVendor\MyApp" prod /path/to/app
+```
+
+#### Demo
+
+Run the included demo to see DAST in action:
+
+```bash
+cd demo
+composer install
+cd ..
+./bin/bear-security-dast "BEAR\Security\Demo" hal-app demo
+```
+
+Output:
+```
+  BEAR Security DAST Scanner
+
+  App:     BEAR\Security\Demo
+  Context: hal-app
+  AppDir:  demo
+
+  Discovering endpoints...
+    GET /(?string $name)
+    GET /safe/json-output(string $name)
+    GET /vulnerable/xss(string $name)
+    ...
+
+  Found 9 endpoints
+
+HIGH: XSS - GET /?name=<script>alert(1)</script>:0 - Cross-Site Scripting...
+  see https://bearsunday.github.io/BEAR.Security/issues/en/xss
+  ...
+
+22 issues found: 22 high
+Scanned 9 endpoints in 0.02s
+```
+
+#### Detectors
 
 - SQL Injection payloads
 - XSS payloads
@@ -230,6 +273,7 @@ See [Psalm Taint Plugin](docs/psalm-taint-plugin.md) for configuration and detai
 
 ## Documentation
 
+- [Issue Types](https://bearsunday.github.io/BEAR.Security/) - Vulnerability documentation ([日本語](https://bearsunday.github.io/BEAR.Security/issues/ja/))
 - [Psalm Taint Plugin](docs/psalm-taint-plugin.md) - Taint analysis for BEAR.Sunday ResourceObject
 - [Security through Architecture](docs/security-architecture.md) - Why BEAR.Sunday is secure by design
 - [Detection Matrix](docs/detection-matrix.md) - Full detection capability matrix

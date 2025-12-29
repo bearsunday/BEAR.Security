@@ -17,20 +17,14 @@ use BEAR\Resource\ResourceObject;
  */
 class JsonRendererEcho extends ResourceObject
 {
-    public function __construct(
-        private JsonRenderer $renderer,
-    ) {
-    }
-
-    public function onGet(): static
+    public function onGet(string $name): static
     {
-        $name = $_GET['name'] ?? '';
-
         // Set tainted data in body
         $this->body = ['name' => $name, 'greeting' => "Hello, {$name}"];
 
         // SAFE: JsonRenderer escapes via json_encode
-        $json = $this->renderer->render($this);
+        $renderer = new JsonRenderer();
+        $json = $renderer->render($this);
         echo $json;
 
         return $this;

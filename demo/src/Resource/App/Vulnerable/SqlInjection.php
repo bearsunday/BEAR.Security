@@ -12,9 +12,7 @@ use PDO;
  *
  * Expected: TaintedSql detection
  *
- * Note: In real BEAR.Sunday apps, user input comes via method parameters.
- * This demo uses $_GET directly to demonstrate taint flow.
- * When BEAR.Resource has taint annotations, method parameters will be tracked.
+ * The plugin marks onGet($id) parameter as tainted.
  */
 class SqlInjection extends ResourceObject
 {
@@ -23,11 +21,8 @@ class SqlInjection extends ResourceObject
     ) {
     }
 
-    public function onGet(): static
+    public function onGet(string $id): static
     {
-        // Simulating user input from query parameter
-        $id = $_GET['id'] ?? '';
-
         // VULNERABLE: SQL injection via string concatenation
         $sql = "SELECT * FROM users WHERE id = '" . $id . "'";
         $this->body = $this->pdo->query($sql)->fetchAll();

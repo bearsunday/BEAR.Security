@@ -11,6 +11,11 @@ use BEAR\Security\VulnerabilityInterface;
  */
 final class PathTraversalPayload implements PayloadInterface
 {
+    public function getType(): string
+    {
+        return 'PathTraversal';
+    }
+
     public function getName(): string
     {
         return 'Path Traversal / LFI';

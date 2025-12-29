@@ -1,0 +1,305 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * BEAR Security DAST Scanner - CLI Tool
+ *
+ * Usage: bear-security-dast [options] <AppName> <context> <appDir>
+ *
+ * Options:
+ *   -f, --format <fmt>   Output format: console (default), json
+ *   -o, --output <file>  Output file (default: stdout)
+ *   -q, --quiet          Suppress banner and progress
+ *   --no-colors          Disable colored output
+ *   -h, --help           Show help message
+ *
+ * Examples:
+ *   bear-security-dast "MyVendor\MyApp" prod /path/to/app
+ *   bear-security-dast -f json "MyVendor\MyApp" prod /path/to/app > report.json
+ */
+
+namespace BEAR\Security\Dast;
+
+use BEAR\AppMeta\Meta;
+use BEAR\Package\Injector;
+use BEAR\Resource\ResourceInterface;
+use BEAR\Security\Output\ConsoleOutput;
+use BEAR\Security\Output\JsonOutput;
+
+use function array_shift;
+use function class_exists;
+use function count;
+use function file_exists;
+use function file_put_contents;
+use function fwrite;
+use function sprintf;
+
+use const PHP_EOL;
+use const STDERR;
+use const STDOUT;
+
+// Find autoloader
+$autoloadPaths = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+    __DIR__ . '/../../autoload.php',
+];
+
+$autoloadFound = false;
+foreach ($autoloadPaths as $autoloadPath) {
+    if (file_exists($autoloadPath)) {
+        require $autoloadPath;
+        $autoloadFound = true;
+        break;
+    }
+}
+
+if (! $autoloadFound) {
+    fwrite(STDERR, "Error: Could not find autoloader. Run 'composer install' first.\n");
+    exit(1);
+}
+
+/**
+ * Parse command line arguments
+ *
+ * @param string[] $args
+ *
+ * @return array{appName: string|null, context: string|null, appDir: string|null, format: string, output: string|null, quiet: bool, colors: bool, help: bool}
+ */
+function parseArgs(array $args): array
+{
+    $options = [
+        'appName' => null,
+        'context' => null,
+        'appDir' => null,
+        'format' => 'console',
+        'output' => null,
+        'quiet' => false,
+        'colors' => true,
+        'help' => false,
+    ];
+
+    // Remove script name
+    array_shift($args);
+
+    $positional = [];
+
+    while (count($args) > 0) {
+        $arg = array_shift($args);
+
+        switch ($arg) {
+            case '-f':
+            case '--format':
+                $options['format'] = array_shift($args) ?? 'console';
+                break;
+
+            case '-o':
+            case '--output':
+                $options['output'] = array_shift($args);
+                break;
+
+            case '-q':
+            case '--quiet':
+                $options['quiet'] = true;
+                break;
+
+            case '--no-colors':
+                $options['colors'] = false;
+                break;
+
+            case '-h':
+            case '--help':
+                $options['help'] = true;
+                break;
+
+            default:
+                if ($arg !== '' && $arg[0] !== '-') {
+                    $positional[] = $arg;
+                }
+
+                break;
+        }
+    }
+
+    // Assign positional arguments
+    if (isset($positional[0])) {
+        $options['appName'] = $positional[0];
+    }
+
+    if (isset($positional[1])) {
+        $options['context'] = $positional[1];
+    }
+
+    if (isset($positional[2])) {
+        $options['appDir'] = $positional[2];
+    }
+
+    return $options;
+}
+
+/**
+ * Show help message
+ */
+function showHelp(): void
+{
+    echo <<<'HELP'
+BEAR Security DAST Scanner - Dynamic Application Security Testing
+
+Usage: bear-security-dast [options] <AppName> <context> <appDir>
+
+Arguments:
+  AppName     Application namespace (e.g., "MyVendor\MyApp")
+  context     Application context (e.g., "prod", "api")
+  appDir      Application directory path
+
+Options:
+  -f, --format <fmt>   Output format: console (default), json
+  -o, --output <file>  Output file (default: stdout)
+  -q, --quiet          Suppress banner and progress output
+  --no-colors          Disable colored output
+  -h, --help           Show this help message
+
+Detectors:
+  - SQL Injection
+  - XSS (Cross-Site Scripting)
+  - Command Injection
+  - Path Traversal
+
+Examples:
+  bear-security-dast "MyVendor\MyApp" prod /path/to/app
+  bear-security-dast -f json "MyVendor\MyApp" prod /path/to/app > report.json
+
+Exit codes:
+  0 - No vulnerabilities found
+  1 - Vulnerabilities found or error occurred
+
+HELP;
+}
+
+/**
+ * Output colored text
+ */
+function colorize(string $text, string $color, bool $enabled = true): string
+{
+    if (! $enabled) {
+        return $text;
+    }
+
+    $colors = [
+        'red' => "\033[31m",
+        'green' => "\033[32m",
+        'yellow' => "\033[33m",
+        'blue' => "\033[34m",
+        'cyan' => "\033[36m",
+        'reset' => "\033[0m",
+    ];
+
+    return ($colors[$color] ?? '') . $text . $colors['reset'];
+}
+
+// Main
+$options = parseArgs($argv);
+
+if ($options['help']) {
+    showHelp();
+    exit(0);
+}
+
+if ($options['appName'] === null || $options['context'] === null || $options['appDir'] === null) {
+    fwrite(STDERR, "Error: Missing required arguments.\n\n");
+    showHelp();
+    exit(1);
+}
+
+// Verify dependencies
+if (! class_exists(Meta::class)) {
+    fwrite(STDERR, "Error: bear/app-meta is required. Run 'composer require --dev bear/app-meta'\n");
+    exit(1);
+}
+
+$appName = $options['appName'];
+$context = $options['context'];
+$appDir = $options['appDir'];
+
+// Verify app directory
+if (! is_dir($appDir)) {
+    fwrite(STDERR, "Error: Application directory not found: {$appDir}\n");
+    exit(1);
+}
+
+// Show banner
+if (! $options['quiet'] && $options['format'] === 'console') {
+    fwrite(STDOUT, "\n");
+    fwrite(STDOUT, colorize("  BEAR Security DAST Scanner\n", 'cyan', $options['colors']));
+    fwrite(STDOUT, "\n");
+    fwrite(STDOUT, "  App:     {$appName}\n");
+    fwrite(STDOUT, "  Context: {$context}\n");
+    fwrite(STDOUT, "  AppDir:  {$appDir}\n");
+    fwrite(STDOUT, "\n");
+}
+
+try {
+    // Create Meta for endpoint discovery
+    $meta = new Meta($appName, $context, $appDir);
+
+    // Get ResourceInterface (in-process, no HTTP server needed)
+    $injector = Injector::getInstance($appName, $context, $appDir);
+    $resource = $injector->getInstance(ResourceInterface::class);
+
+    // Create EndpointDiscovery
+    $discovery = new EndpointDiscovery($meta, $resource);
+
+    // Create AutoDastScanner (uses in-process resource requests)
+    $scanner = new AutoDastScanner($discovery, $resource);
+
+    // Set progress callback for console output
+    if (! $options['quiet'] && $options['format'] === 'console') {
+        fwrite(STDOUT, "\n");
+        fwrite(STDOUT, colorize("  Discovering endpoints...\n", 'blue', $options['colors']));
+
+        $endpoints = $scanner->discoverEndpoints();
+        foreach ($endpoints as $endpoint) {
+            fwrite(STDOUT, sprintf("    %s\n", $endpoint));
+        }
+
+        fwrite(STDOUT, sprintf("\n  Found %d endpoints\n", count($endpoints)));
+    }
+
+    // Run scan
+    $result = $scanner->scan();
+
+    // Format output
+    if ($options['format'] === 'json') {
+        $output = (new JsonOutput())->format($result);
+    } else {
+        $output = (new ConsoleOutput($options['colors']))->format($result);
+    }
+
+    // Write output
+    if ($options['output'] !== null) {
+        $bytesWritten = file_put_contents($options['output'], $output);
+        if ($bytesWritten === false) {
+            fwrite(STDERR, "Error: Failed to write output to: {$options['output']}\n");
+            exit(1);
+        }
+
+        if (! $options['quiet']) {
+            fwrite(STDOUT, "\n  Report written to: {$options['output']}\n");
+        }
+    } else {
+        fwrite(STDOUT, "\n" . $output);
+    }
+
+    // Exit with appropriate code
+    exit($result->hasCriticalOrHigh() ? 1 : 0);
+} catch (\Throwable $e) {
+    fwrite(STDERR, sprintf("Error: %s\n", $e->getMessage()));
+
+    if (! $options['quiet']) {
+        fwrite(STDERR, sprintf("  File: %s:%d\n", $e->getFile(), $e->getLine()));
+    }
+
+    exit(1);
+}

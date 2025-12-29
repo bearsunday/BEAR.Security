@@ -13,6 +13,11 @@ use function str_repeat;
  */
 final class CsrfPayload implements PayloadInterface
 {
+    public function getType(): string
+    {
+        return 'CSRF';
+    }
+
     public function getName(): string
     {
         return 'Cross-Site Request Forgery (CSRF)';

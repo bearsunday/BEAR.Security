@@ -21,20 +21,16 @@ class HtmlEscaped extends ResourceObject
     ) {
     }
 
-    public function onGet(): static
+    public function onGet(string $name): static
     {
-        $name = $_GET['name'] ?? '';
-
         // SAFE: Qiq's h() escapes HTML special characters
         $this->body['html'] = '<h1>Hello, ' . $this->escape->h($name) . '</h1>';
 
         return $this;
     }
 
-    public function onPost(): static
+    public function onPost(string $url): static
     {
-        $url = $_POST['url'] ?? '';
-
         // SAFE: Qiq's u() escapes URL
         $this->body['link'] = '<a href="' . $this->escape->u($url) . '">Link</a>';
 

@@ -12,6 +12,7 @@ use BEAR\Security\Dast\Payload\PathTraversalPayload;
 use BEAR\Security\Dast\Payload\RemoteFileInclusionPayload;
 use BEAR\Security\Dast\Payload\SqlInjectionPayload;
 use BEAR\Security\Dast\Payload\XssPayload;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function file_get_contents;
@@ -21,6 +22,16 @@ use function uniqid;
 use function unlink;
 use function urldecode;
 
+#[CoversClass(DastScanner::class)]
+#[CoversClass(ResponseAnalyzer::class)]
+#[CoversClass(SqlInjectionPayload::class)]
+#[CoversClass(XssPayload::class)]
+#[CoversClass(CommandInjectionPayload::class)]
+#[CoversClass(PathTraversalPayload::class)]
+#[CoversClass(RemoteFileInclusionPayload::class)]
+#[CoversClass(CsrfPayload::class)]
+#[CoversClass(ScanResult::class)]
+#[CoversClass(Vulnerability::class)]
 class DastScannerTest extends TestCase
 {
     public function testSqlInjectionPayloadHasPayloads(): void
@@ -100,7 +111,7 @@ class DastScannerTest extends TestCase
         );
 
         $this->assertNotNull($vulnerability);
-        $this->assertStringContainsString('RFI', $vulnerability->getType());
+        $this->assertSame('RemoteFileInclusion', $vulnerability->getType());
     }
 
     public function testResponseAnalyzerDetectsSqlError(): void
@@ -120,7 +131,7 @@ class DastScannerTest extends TestCase
         );
 
         $this->assertNotNull($vulnerability);
-        $this->assertStringContainsString('SQL', $vulnerability->getType());
+        $this->assertSame('SqlInjection', $vulnerability->getType());
     }
 
     public function testResponseAnalyzerDetectsXss(): void
@@ -160,7 +171,7 @@ class DastScannerTest extends TestCase
         );
 
         $this->assertNotNull($vulnerability);
-        $this->assertStringContainsString('COMMAND', $vulnerability->getType());
+        $this->assertSame('CommandInjection', $vulnerability->getType());
     }
 
     public function testResponseAnalyzerDetectsPathTraversal(): void
@@ -181,7 +192,7 @@ daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin';
         );
 
         $this->assertNotNull($vulnerability);
-        $this->assertStringContainsString('PATH', $vulnerability->getType());
+        $this->assertSame('PathTraversal', $vulnerability->getType());
     }
 
     public function testResponseAnalyzerNoFalsePositive(): void

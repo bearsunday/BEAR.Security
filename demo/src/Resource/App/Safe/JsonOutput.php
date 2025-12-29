@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BEAR\Security\Demo\Resource\App\Safe;
 
-use BEAR\Resource\RenderInterface;
 use BEAR\Resource\ResourceObject;
 
 /**
@@ -16,15 +15,8 @@ use BEAR\Resource\ResourceObject;
  */
 class JsonOutput extends ResourceObject
 {
-    public function __construct(
-        private RenderInterface $renderer,
-    ) {
-    }
-
-    public function onGet(): static
+    public function onGet(string $name): static
     {
-        $name = $_GET['name'] ?? '';
-
         // SAFE: JsonRenderer escapes via json_encode
         $this->body = ['name' => $name, 'greeting' => "Hello, {$name}"];
 

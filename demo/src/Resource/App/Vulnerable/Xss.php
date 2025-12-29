@@ -13,20 +13,16 @@ use BEAR\Resource\ResourceObject;
  */
 class Xss extends ResourceObject
 {
-    public function onGet(): static
+    public function onGet(string $name): static
     {
-        $name = $_GET['name'] ?? '';
-
         // VULNERABLE: XSS via direct HTML concatenation
         $this->body['html'] = '<h1>Hello, ' . $name . '</h1>';
 
         return $this;
     }
 
-    public function onPost(): static
+    public function onPost(string $message): static
     {
-        $message = $_POST['message'] ?? '';
-
         // VULNERABLE: Direct echo without escaping
         echo '<div>' . $message . '</div>';
 

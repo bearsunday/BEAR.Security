@@ -1,0 +1,5 @@
+title: BEAR.Security
+description: Security scanner for BEAR.Sunday applications
+baseurl: "/BEAR.Security"
+url: "https://bearsunday.github.io"
+theme: minima

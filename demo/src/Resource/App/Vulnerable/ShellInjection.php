@@ -13,20 +13,16 @@ use BEAR\Resource\ResourceObject;
  */
 class ShellInjection extends ResourceObject
 {
-    public function onGet(): static
+    public function onGet(string $filename): static
     {
-        $filename = $_GET['filename'] ?? '';
-
         // VULNERABLE: Shell injection via shell_exec
         $this->body['content'] = shell_exec('cat ' . $filename);
 
         return $this;
     }
 
-    public function onPost(): static
+    public function onPost(string $command): static
     {
-        $command = $_POST['command'] ?? '';
-
         // VULNERABLE: Direct command execution
         $this->body['result'] = exec($command);
 

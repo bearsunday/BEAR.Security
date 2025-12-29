@@ -22,10 +22,8 @@ class QiqEscapedEcho extends ResourceObject
     ) {
     }
 
-    public function onGet(): static
+    public function onGet(string $name): static
     {
-        $name = $_GET['name'] ?? '';
-
         // SAFE: Qiq's h() escapes HTML, then echo should be safe
         $escaped = $this->escape->h($name);
         echo '<h1>Hello, ' . $escaped . '</h1>';
@@ -33,10 +31,8 @@ class QiqEscapedEcho extends ResourceObject
         return $this;
     }
 
-    public function onPost(): static
+    public function onPost(string $comment): static
     {
-        $comment = $_POST['comment'] ?? '';
-
         // SAFE: Multiple escape methods
         $escapedHtml = $this->escape->h($comment);
         $escapedAttr = $this->escape->a($comment);

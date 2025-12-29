@@ -11,6 +11,11 @@ use BEAR\Security\VulnerabilityInterface;
  */
 final class RemoteFileInclusionPayload implements PayloadInterface
 {
+    public function getType(): string
+    {
+        return 'RemoteFileInclusion';
+    }
+
     public function getName(): string
     {
         return 'Remote File Inclusion (RFI)';
