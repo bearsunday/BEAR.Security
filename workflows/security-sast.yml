@@ -1,0 +1,79 @@
+name: Security SAST
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  sast:
+    name: SAST Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: SAST Scan
+        run: ./vendor/bin/bear.security-scan src -f sarif > sast-results.sarif
+
+      - name: Upload SAST results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: sast-results.sarif
+          category: sast
+
+  taint:
+    name: Psalm Taint Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Psalm Taint Analysis
+        run: ./vendor/bin/psalm --taint-analysis --report=taint-results.sarif
+
+      - name: Upload Taint results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: taint-results.sarif
+          category: taint
