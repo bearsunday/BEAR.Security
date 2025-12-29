@@ -100,9 +100,42 @@ Detects vulnerabilities that require context understanding:
 | Timing Attack | CWE-208 | Side-channel |
 | Business Logic | CWE-840 | Logic flaws |
 
+#### Authentication
+
+Two authentication methods are supported:
+
+**Option 1: API Key (Direct API)**
 ```bash
-# AI Audit (requires ANTHROPIC_API_KEY)
-ANTHROPIC_API_KEY=sk-xxx vendor/bin/bear-security-audit src
+export ANTHROPIC_API_KEY=sk-ant-...
+vendor/bin/bear-security-audit src
+```
+
+**Option 2: Claude CLI (Max Plan)**
+
+For Max plan subscribers, use the authenticated Claude CLI:
+
+```bash
+# Install Claude CLI
+npm install -g @anthropic-ai/claude-code
+
+# Authenticate
+claude auth login
+
+# Run audit (no API key required)
+vendor/bin/bear-security-audit src
+```
+
+#### Output Formats
+
+```bash
+# Console output (default)
+vendor/bin/bear-security-audit src
+
+# JSON output
+vendor/bin/bear-security-audit src --format=json
+
+# SARIF for GitHub Security
+vendor/bin/bear-security-audit src --format=sarif --output=results.sarif
 ```
 
 ### DAST (Dynamic Analysis)

@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace BEAR\Security;
 
 use BEAR\Security\Ai\ClaudeAuditor;
+use BEAR\Security\Ai\ClaudeCliAdapter;
 use BEAR\Security\Output\JsonOutput;
 use BEAR\Security\Output\SarifOutput;
 
@@ -15,8 +16,8 @@ use function dirname;
 use function file_exists;
 use function file_put_contents;
 use function fwrite;
-use function implode;
 use function getenv;
+use function implode;
 use function is_dir;
 use function is_string;
 use function str_repeat;
@@ -71,13 +72,19 @@ Options:
   --output <file>     Write output to file
   --help, -h          Show this help
 
-Environment:
-  ANTHROPIC_API_KEY   Required. Your Anthropic API key.
+Authentication (one of the following):
+  ANTHROPIC_API_KEY   API key for direct API access
+  Claude CLI          Authenticated claude CLI (Max plan supported)
 
 Examples:
+  # Using API key
+  ANTHROPIC_API_KEY=sk-xxx bear-security-audit src
+
+  # Using Claude CLI (Max plan)
   bear-security-audit src
+
+  # With output options
   bear-security-audit src --format=sarif --output=results.sarif
-  ANTHROPIC_API_KEY=sk-xxx bear-security-audit src --format=json
 
 HELP;
         exit(0);
@@ -97,15 +104,30 @@ if (!is_dir($path)) {
     exit(1);
 }
 
+// Check authentication availability
 $apiKey = getenv('ANTHROPIC_API_KEY');
-if (! is_string($apiKey) || $apiKey === '') {
-    fwrite(STDERR, "Error: ANTHROPIC_API_KEY environment variable is required\n");
-    fwrite(STDERR, "Set it with: export ANTHROPIC_API_KEY=sk-ant-...\n");
+$hasApiKey = is_string($apiKey) && $apiKey !== '';
+$hasCliAuth = ClaudeCliAdapter::isAvailable();
+
+if (! $hasApiKey && ! $hasCliAuth) {
+    fwrite(STDERR, "Error: No authentication method available.\n\n");
+    fwrite(STDERR, "Option 1: Set ANTHROPIC_API_KEY environment variable\n");
+    fwrite(STDERR, "  export ANTHROPIC_API_KEY=sk-ant-...\n\n");
+    fwrite(STDERR, "Option 2: Install and authenticate Claude CLI\n");
+    fwrite(STDERR, "  npm install -g @anthropic-ai/claude-code\n");
+    fwrite(STDERR, "  claude auth login\n");
     exit(2);
 }
 
 try {
     $auditor = new ClaudeAuditor();
+    $mode = $auditor->getMode();
+
+    // Show authentication mode
+    $modeLabel = $mode === 'api' ? 'API Key' : 'Claude CLI (Max plan)';
+    echo "Authentication: {$modeLabel}\n";
+    echo "Analyzing: {$path}\n\n";
+
     $result = $auditor->audit($path);
 
     // Convert to ScanResult for output formatters

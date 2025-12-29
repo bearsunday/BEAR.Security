@@ -8,7 +8,6 @@ use BEAR\Security\Vulnerability;
 use RuntimeException;
 
 use function array_map;
-use function count;
 use function curl_close;
 use function curl_error;
 use function curl_exec;
@@ -31,7 +30,11 @@ use const CURLOPT_URL;
 use const JSON_THROW_ON_ERROR;
 
 /**
- * Claude API-based security auditor
+ * Claude-based security auditor
+ *
+ * Supports two authentication methods:
+ * 1. API key (ANTHROPIC_API_KEY) - Direct API calls
+ * 2. Claude CLI (Max plan) - Uses authenticated claude CLI
  */
 final class ClaudeAuditor implements AuditorInterface
 {
@@ -39,7 +42,12 @@ final class ClaudeAuditor implements AuditorInterface
     private const MODEL = 'claude-sonnet-4-20250514';
     private const MAX_TOKENS = 8192;
 
-    private string $apiKey;
+    private const MODE_API = 'api';
+    private const MODE_CLI = 'cli';
+
+    private string $mode;
+    private ?string $apiKey = null;
+    private ?ClaudeCliAdapter $cliAdapter = null;
     private PromptBuilder $promptBuilder;
     private FileCollector $fileCollector;
     private TokenTracker $tokenTracker;
@@ -47,14 +55,34 @@ final class ClaudeAuditor implements AuditorInterface
     public function __construct(?string $apiKey = null)
     {
         $key = $apiKey ?? getenv('ANTHROPIC_API_KEY');
-        if (! is_string($key) || $key === '') {
-            throw new RuntimeException('ANTHROPIC_API_KEY environment variable is required');
+
+        if (is_string($key) && $key !== '') {
+            // API key available - use direct API
+            $this->mode = self::MODE_API;
+            $this->apiKey = $key;
+        } elseif (ClaudeCliAdapter::isAvailable()) {
+            // No API key but Claude CLI available - use CLI
+            $this->mode = self::MODE_CLI;
+            $this->cliAdapter = new ClaudeCliAdapter();
+        } else {
+            throw new RuntimeException(
+                "No authentication method available.\n" .
+                "Either set ANTHROPIC_API_KEY environment variable,\n" .
+                "or install and authenticate Claude CLI (claude --version)"
+            );
         }
 
-        $this->apiKey = $key;
         $this->promptBuilder = new PromptBuilder();
         $this->fileCollector = new FileCollector();
         $this->tokenTracker = new TokenTracker();
+    }
+
+    /**
+     * Get the current authentication mode
+     */
+    public function getMode(): string
+    {
+        return $this->mode;
     }
 
     public function audit(string $projectPath): AuditResult
@@ -62,8 +90,11 @@ final class ClaudeAuditor implements AuditorInterface
         $files = $this->fileCollector->collect($projectPath);
         $prompt = $this->promptBuilder->build($files);
 
-        $response = $this->callApi($prompt);
-        $parsed = $this->promptBuilder->parseResponse($response['content']);
+        $responseContent = $this->mode === self::MODE_API
+            ? $this->callApi($prompt)
+            : $this->callCli($prompt);
+
+        $parsed = $this->promptBuilder->parseResponse($responseContent);
 
         $vulnerabilities = array_map(
             static fn (array $v) => new Vulnerability(
@@ -92,10 +123,14 @@ final class ClaudeAuditor implements AuditorInterface
     }
 
     /**
-     * @return array{content: string, input_tokens: int, output_tokens: int}
+     * Call Claude API directly
      */
-    private function callApi(string $prompt): array
+    private function callApi(string $prompt): string
     {
+        if ($this->apiKey === null) {
+            throw new RuntimeException('API key not set');
+        }
+
         $payload = [
             'model' => self::MODEL,
             'max_tokens' => self::MAX_TOKENS,
@@ -142,10 +177,26 @@ final class ClaudeAuditor implements AuditorInterface
 
         $this->tokenTracker->record('api_call', $inputTokens, $outputTokens);
 
-        return [
-            'content' => $data['content'][0]['text'] ?? '',
-            'input_tokens' => $inputTokens,
-            'output_tokens' => $outputTokens,
-        ];
+        return $data['content'][0]['text'] ?? '';
+    }
+
+    /**
+     * Call Claude CLI (for Max plan users)
+     */
+    private function callCli(string $prompt): string
+    {
+        if ($this->cliAdapter === null) {
+            throw new RuntimeException('CLI adapter not initialized');
+        }
+
+        $response = $this->cliAdapter->send($prompt);
+
+        // CLI doesn't provide token counts, estimate based on content length
+        $estimatedInputTokens = (int) (mb_strlen($prompt) / 4);
+        $estimatedOutputTokens = (int) (mb_strlen($response) / 4);
+
+        $this->tokenTracker->record('cli_call', $estimatedInputTokens, $estimatedOutputTokens);
+
+        return $response;
     }
 }
