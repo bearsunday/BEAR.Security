@@ -48,25 +48,10 @@ blockquote {
    php.net inspired style Syntax (from BEAR.Sunday manual)
    =========================== */
 
-:root {
-    --bg-code: #fff;
-    --border-code: transparent;
-    --c-default: #0b3da6;
-    --c-keyword: #1a7f37;
-    --c-string: #c62828;
-    --c-comment: #bb5200;
-    --c-punc: #222222;
-    --c-func: #6b1b1b;
-    --c-number: #0a7a7a;
-    --bg-insert: #ddffdd;
-    --bg-delete: #ffdddd;
-}
-
 .highlight {
-    background: var(--bg-code);
-    color: var(--c-default);
+    background: #fff !important;
+    color: #0b3da6 !important;
     border-radius: 6px;
-    color-scheme: light dark;
 }
 
 .highlight pre {
@@ -75,12 +60,11 @@ blockquote {
     overflow-x: auto;
     tab-size: 2;
     line-height: 1.5;
+    background: #fff !important;
 }
 
-.highlight,
-.highlight pre,
 .highlight code {
-    font-variant-ligatures: none;
+    background: #fff !important;
 }
 
 /* Comments */
@@ -89,8 +73,8 @@ blockquote {
 .highlight .cm,
 .highlight .cs,
 .highlight .cp {
-    color: var(--c-comment);
-    font-style: normal;
+    color: #bb5200 !important;
+    font-style: normal !important;
 }
 
 /* Strings */
@@ -105,18 +89,19 @@ blockquote {
 .highlight .si,
 .highlight .sx,
 .highlight .sr {
-    color: var(--c-string);
+    color: #c62828 !important;
 }
 
 /* Keywords */
 .highlight .k,
+.highlight .kc,
 .highlight .kd,
 .highlight .kn,
 .highlight .kp,
 .highlight .kr,
 .highlight .kt {
-    color: var(--c-keyword);
-    font-weight: normal;
+    color: #1a7f37 !important;
+    font-weight: normal !important;
 }
 
 /* Numbers */
@@ -126,7 +111,7 @@ blockquote {
 .highlight .mh,
 .highlight .mo,
 .highlight .il {
-    color: var(--c-number);
+    color: #0a7a7a !important;
 }
 
 /* Default (identifiers, operators, namespaces, etc.) */
@@ -144,57 +129,60 @@ blockquote {
 .highlight .nx,
 .highlight .nt,
 .highlight .o,
-.highlight .p,
 .highlight .w {
-    color: var(--c-default);
+    color: #0b3da6 !important;
 }
 
-/* Punctuation / operators */
-.highlight .p { color: var(--c-punc); }
-.highlight .o { color: var(--c-default); }
-
-/* Functions / attributes minimal emphasis */
-.highlight .na,
-.highlight .nd,
-.highlight .nf {
-    color: var(--c-default);
-    font-weight: normal;
+/* Punctuation */
+.highlight .p {
+    color: #222222 !important;
 }
 
-/* JSON readability */
-.highlight .nt { color: var(--c-default); }
-.highlight .s  { color: var(--c-string); }
-.highlight .p  { color: var(--c-punc); }
+/* Functions / attributes */
+.highlight .nf,
+.highlight .nd {
+    color: #0b3da6 !important;
+    font-weight: normal !important;
+}
+
+/* Class names */
+.highlight .nc {
+    color: #0b3da6 !important;
+    font-weight: normal !important;
+}
+
+/* Exception names */
+.highlight .ne {
+    color: #6b1b1b !important;
+    font-weight: normal !important;
+}
 
 /* Generic (diff, error, headings, etc.) */
-.highlight .gd { color: #000; background: var(--bg-delete); }
-.highlight .gi { color: #000; background: var(--bg-insert); }
+.highlight .gd {
+    color: #000 !important;
+    background: #ffdddd !important;
+}
+.highlight .gi {
+    color: #000 !important;
+    background: #ddffdd !important;
+}
 .highlight .gr,
-.highlight .gt { color: #aa0000; }
+.highlight .gt {
+    color: #aa0000 !important;
+}
 .highlight .gh,
-.highlight .gu { color: #9aa0a6; }
-.highlight .go { color: #888888; }
-.highlight .gp { color: #555555; }
-.highlight .gs { font-weight: bold; }
-.highlight .ge { font-style: italic; }
-
-/* Compatibility adjustments */
-.highlight .kc,
-.highlight .kd,
-.highlight .kp,
-.highlight .kr { font-weight: normal; }
-
-.highlight .kt { color: var(--c-keyword); font-weight: normal; }
-.highlight .nb,
-.highlight .bp { color: var(--c-default); }
-.highlight .nc { color: var(--c-default); font-weight: normal; }
-.highlight .ne { color: var(--c-func); font-weight: normal; }
-.highlight .nn { color: var(--c-default); }
-.highlight .nt { color: var(--c-default); }
-
-/* Forced colors mode (Windows High Contrast, etc.) */
-@media (forced-colors: active) {
-    .highlight { background: Canvas; color: CanvasText; }
-    .highlight .gd { background: none; outline: 2px solid ButtonBorder; }
-    .highlight .gi { background: none; outline: 2px solid Highlight; }
+.highlight .gu {
+    color: #9aa0a6 !important;
+}
+.highlight .go {
+    color: #888888 !important;
+}
+.highlight .gp {
+    color: #555555 !important;
+}
+.highlight .gs {
+    font-weight: bold !important;
+}
+.highlight .ge {
+    font-style: italic !important;
 }
