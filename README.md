@@ -1,4 +1,4 @@
-# BEAR.Security (WIP)
+# BEAR.Security
 
 Security scanner for BEAR.Sunday applications with OWASP Top 10 compliance.
 
