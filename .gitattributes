@@ -2,7 +2,6 @@
 /demo export-ignore
 /tests export-ignore
 /docs export-ignore
-/stubs export-ignore
 /.github export-ignore
 /.idea export-ignore
 /build export-ignore
