@@ -12,8 +12,8 @@ use BEAR\Security\Dast\Payload\PathTraversalPayload;
 use BEAR\Security\Dast\Payload\RemoteFileInclusionPayload;
 use BEAR\Security\Dast\Payload\SqlInjectionPayload;
 use BEAR\Security\Dast\Payload\XssPayload;
+use BEAR\Security\Dast\SecurityWorkflowTest;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 
 use function file_get_contents;
 use function preg_match;
@@ -32,7 +32,7 @@ use function urldecode;
 #[CoversClass(CsrfPayload::class)]
 #[CoversClass(ScanResult::class)]
 #[CoversClass(Vulnerability::class)]
-class DastScannerTest extends TestCase
+class DastScannerTest extends SecurityWorkflowTest
 {
     public function testSqlInjectionPayloadHasPayloads(): void
     {
