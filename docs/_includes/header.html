@@ -15,8 +15,8 @@
         </span>
       </label>
       <div class="trigger">
-        <a class="page-link" href="{{ '/issues/en/' | relative_url }}">English</a>
-        <a class="page-link" href="{{ '/issues/ja/' | relative_url }}">日本語</a>
+        <a class="page-link" href="{{ page.url | replace: '/ja/', '/en/' | relative_url }}">English</a>
+        <a class="page-link" href="{{ page.url | replace: '/en/', '/ja/' | relative_url }}">日本語</a>
       </div>
     </nav>
   </div>
