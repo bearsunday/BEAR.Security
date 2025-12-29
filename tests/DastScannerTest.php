@@ -151,7 +151,7 @@ class DastScannerTest extends SecurityWorkflowTest
         );
 
         $this->assertNotNull($vulnerability);
-        $this->assertStringContainsString('XSS', $vulnerability->getType());
+        $this->assertSame('XSS', $vulnerability->getType());
     }
 
     public function testResponseAnalyzerDetectsCommandInjection(): void
