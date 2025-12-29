@@ -1,0 +1,35 @@
+<?php
+/**
+ * Qiq stub for Psalm taint analysis
+ * Until qiq/qiq releases with taint annotations
+ */
+
+namespace Qiq\Helper\Html;
+
+class Escape
+{
+    /**
+     * @psalm-taint-escape html
+     */
+    public function a(mixed $raw): string {}
+
+    /**
+     * @psalm-taint-escape css
+     */
+    public function c(mixed $raw): string {}
+
+    /**
+     * @psalm-taint-escape html
+     */
+    public function h(mixed $raw): string {}
+
+    /**
+     * @psalm-taint-escape html
+     */
+    public function j(mixed $raw): string {}
+
+    /**
+     * @psalm-taint-escape html
+     */
+    public function u(mixed $raw): string {}
+}

@@ -15,6 +15,8 @@
     </projectFiles>
     <stubs>
         <file name="stubs/PDO.phpstub"/>
+        <file name="stubs/AuraSql.phpstub"/>
+        <file name="stubs/Qiq.phpstub"/>
     </stubs>
     <plugins>
         <pluginClass class="BEAR\Security\Psalm\ResourceTaintPlugin"/>
