@@ -90,3 +90,4 @@ class User extends ResourceObject
 
 - [Psalm Taint Analysis](https://psalm.dev/docs/security_analysis/)
 - [BEAR.Sunday Framework](https://bearsunday.github.io/)
+- [Plugin Internals](./psalm-taint-internals.md) - Technical details for contributors
