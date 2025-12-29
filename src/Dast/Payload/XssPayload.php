@@ -11,6 +11,11 @@ use BEAR\Security\VulnerabilityInterface;
  */
 final class XssPayload implements PayloadInterface
 {
+    public function getType(): string
+    {
+        return 'XSS';
+    }
+
     public function getName(): string
     {
         return 'Cross-Site Scripting (XSS)';

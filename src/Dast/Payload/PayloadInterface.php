@@ -10,7 +10,12 @@ namespace BEAR\Security\Dast\Payload;
 interface PayloadInterface
 {
     /**
-     * Get the payload name/type
+     * Get the vulnerability type code (e.g., 'XSS', 'SqlInjection')
+     */
+    public function getType(): string;
+
+    /**
+     * Get the human-readable payload name
      */
     public function getName(): string;
 

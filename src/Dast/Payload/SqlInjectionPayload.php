@@ -11,6 +11,11 @@ use BEAR\Security\VulnerabilityInterface;
  */
 final class SqlInjectionPayload implements PayloadInterface
 {
+    public function getType(): string
+    {
+        return 'SqlInjection';
+    }
+
     public function getName(): string
     {
         return 'SQL Injection';

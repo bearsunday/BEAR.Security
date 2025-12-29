@@ -21,10 +21,8 @@ class TwigEscaped extends ResourceObject
     ) {
     }
 
-    public function onGet(): static
+    public function onGet(string $name): static
     {
-        $name = $_GET['name'] ?? '';
-
         // SAFE: Twig autoescapes by default
         // {{ name }} in template will be escaped
         $this->body['html'] = $this->twig->render('greeting.html.twig', ['name' => $name]);

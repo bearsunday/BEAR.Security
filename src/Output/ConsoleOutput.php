@@ -8,24 +8,29 @@ use BEAR\Security\ScanResult;
 use BEAR\Security\VulnerabilityInterface;
 
 use function explode;
+use function implode;
+use function preg_replace;
 use function sprintf;
-use function str_repeat;
+use function strtolower;
 use function strtoupper;
 
 use const PHP_EOL;
 
 /**
- * Console output formatter with colors
+ * Console output formatter with Psalm-style colors
  */
 final class ConsoleOutput implements OutputInterface
 {
-    private const COLOR_RESET = "\033[0m";
-    private const COLOR_RED = "\033[31m";
-    private const COLOR_YELLOW = "\033[33m";
-    private const COLOR_GREEN = "\033[32m";
-    private const COLOR_CYAN = "\033[36m";
-    private const COLOR_WHITE = "\033[37m";
-    private const COLOR_BOLD = "\033[1m";
+    private const RESET = "\033[0m";
+    private const RED = "\033[0;31m";
+    private const YELLOW = "\033[0;33m";
+    private const GREEN = "\033[0;32m";
+    private const CYAN = "\033[0;36m";
+    private const GRAY = "\033[0;90m";
+    private const BOLD = "\033[1m";
+    private const BG_RED = "\033[41m";
+    private const WHITE = "\033[0;37m";
+    private const DOCS_URL = 'https://bearsunday.github.io/BEAR.Security/issues/en/';
 
     public function __construct(private bool $useColors = true)
     {
@@ -33,70 +38,70 @@ final class ConsoleOutput implements OutputInterface
 
     public function format(ScanResult $result): string
     {
-        $output = '';
+        $output = PHP_EOL;
 
-        // Header
-        $output .= $this->line('=', 70) . PHP_EOL;
-        $output .= $this->bold('  BEAR Security Scanner - Scan Results') . PHP_EOL;
-        $output .= $this->line('=', 70) . PHP_EOL . PHP_EOL;
-
-        // Summary
-        $output .= $this->formatSummary($result);
-
-        // Vulnerabilities
+        // Vulnerabilities first (like Psalm)
         if ($result->hasVulnerabilities()) {
             $output .= $this->formatVulnerabilities($result);
-        } else {
-            $output .= $this->color(PHP_EOL . '  No vulnerabilities found!' . PHP_EOL, self::COLOR_GREEN);
         }
 
-        // Footer
-        $output .= PHP_EOL . $this->line('=', 70) . PHP_EOL;
+        // Summary at the end
+        $output .= $this->formatSummary($result);
 
         return $output;
     }
 
     private function formatSummary(ScanResult $result): string
     {
-        $output = $this->bold('  Summary:') . PHP_EOL;
-        $output .= $this->line('-', 40) . PHP_EOL;
-        $output .= sprintf("  Files scanned:     %d\n", $result->getFilesScanned());
-        $output .= sprintf("  Scan time:         %.2f seconds\n", $result->getScanTime());
-        $output .= sprintf("  Total issues:      %d\n", $result->getVulnerabilityCount());
-        $output .= PHP_EOL;
+        $output = PHP_EOL;
 
-        if ($result->hasVulnerabilities()) {
-            $output .= $this->bold('  By Severity:') . PHP_EOL;
+        $count = $result->getVulnerabilityCount();
+        $files = $result->getFilesScanned();
+        $time = $result->getScanTime();
 
+        if ($count === 0) {
+            $output .= $this->color('No security issues found!', self::GREEN) . PHP_EOL;
+        } else {
             $critical = $result->getCriticalCount();
             $high = $result->getHighCount();
             $medium = $result->getMediumCount();
             $low = $result->getLowCount();
 
+            $parts = [];
             if ($critical > 0) {
-                $output .= $this->color(sprintf("    CRITICAL: %d\n", $critical), self::COLOR_RED);
+                $parts[] = $this->color("{$critical} critical", self::RED);
             }
 
             if ($high > 0) {
-                $output .= $this->color(sprintf("    HIGH:     %d\n", $high), self::COLOR_RED);
+                $parts[] = $this->color("{$high} high", self::RED);
             }
 
             if ($medium > 0) {
-                $output .= $this->color(sprintf("    MEDIUM:   %d\n", $medium), self::COLOR_YELLOW);
+                $parts[] = $this->color("{$medium} medium", self::YELLOW);
             }
 
             if ($low > 0) {
-                $output .= $this->color(sprintf("    LOW:      %d\n", $low), self::COLOR_WHITE);
+                $parts[] = "{$low} low";
             }
+
+            $output .= sprintf(
+                "%d issues found: %s\n",
+                $count,
+                implode(', ', $parts),
+            );
         }
+
+        $output .= $this->color(
+            sprintf("Scanned %d endpoints in %.2fs", $files, $time),
+            self::GRAY,
+        ) . PHP_EOL;
 
         return $output;
     }
 
     private function formatVulnerabilities(ScanResult $result): string
     {
-        $output = PHP_EOL . $this->bold('  Vulnerabilities:') . PHP_EOL;
-        $output .= $this->line('-', 70) . PHP_EOL;
+        $output = '';
 
         $severityOrder = [
             VulnerabilityInterface::SEVERITY_CRITICAL,
@@ -105,53 +110,71 @@ final class ConsoleOutput implements OutputInterface
             VulnerabilityInterface::SEVERITY_LOW,
         ];
 
-        $index = 1;
         foreach ($severityOrder as $severity) {
             $vulnerabilities = $result->getVulnerabilitiesBySeverity($severity);
             foreach ($vulnerabilities as $vuln) {
-                $output .= $this->formatVulnerability($vuln, $index++);
+                $output .= $this->formatVulnerability($vuln);
             }
         }
 
         return $output;
     }
 
-    private function formatVulnerability(VulnerabilityInterface $vuln, int $index): string
+    private function formatVulnerability(VulnerabilityInterface $vuln): string
     {
-        $severityColor = $this->getSeverityColor($vuln->getSeverity());
+        $severity = strtoupper($vuln->getSeverity());
+        $severityLabel = $this->formatSeverityLabel($severity);
+        $type = $vuln->getType();
 
-        $output = PHP_EOL;
-        $output .= sprintf('  [%d] ', $index);
-        $output .= $this->color(
-            sprintf('[%s]', strtoupper($vuln->getSeverity())),
-            $severityColor,
-        );
-        $output .= sprintf(" %s\n", $vuln->getType());
-        $output .= sprintf("      File: %s:%d\n", $vuln->getFile(), $vuln->getLine());
-        $output .= sprintf("      Description: %s\n", $vuln->getDescription());
-        $output .= $this->color(
-            sprintf("      Recommendation: %s\n", $vuln->getRecommendation()),
-            self::COLOR_CYAN,
+        // Main line: ERROR: Type - file:line - description
+        $output = sprintf(
+            "%s: %s - %s:%d - %s\n",
+            $severityLabel,
+            $type,
+            $vuln->getFile(),
+            $vuln->getLine(),
+            $vuln->getDescription(),
         );
 
+        // Documentation link
+        $docUrl = self::DOCS_URL . $this->typeToSlug($type);
+        $output .= $this->color(sprintf("  see %s\n", $docUrl), self::GRAY);
+
+        // Recommendation
+        $output .= $this->color(
+            sprintf("  %s\n", $vuln->getRecommendation()),
+            self::CYAN,
+        );
+
+        // Code snippet with context
         $snippet = $vuln->getCodeSnippet();
         if ($snippet !== '') {
-            $output .= "      Code:\n";
             foreach (explode("\n", $snippet) as $line) {
-                $output .= sprintf("        %s\n", $line);
+                $output .= $this->color("    {$line}\n", self::GRAY);
             }
         }
+
+        $output .= PHP_EOL;
 
         return $output;
     }
 
-    private function getSeverityColor(string $severity): string
+    /** Convert vulnerability type to URL slug (e.g., "SqlInjection" -> "sql-injection") */
+    private function typeToSlug(string $type): string
+    {
+        // Insert hyphen before uppercase letters, then lowercase
+        $slug = (string) preg_replace('/([a-z])([A-Z])/', '$1-$2', $type);
+
+        return strtolower($slug);
+    }
+
+    private function formatSeverityLabel(string $severity): string
     {
         return match ($severity) {
-            VulnerabilityInterface::SEVERITY_CRITICAL,
-            VulnerabilityInterface::SEVERITY_HIGH => self::COLOR_RED,
-            VulnerabilityInterface::SEVERITY_MEDIUM => self::COLOR_YELLOW,
-            default => self::COLOR_WHITE,
+            'CRITICAL' => $this->color($this->bold('CRITICAL'), self::BG_RED . self::WHITE),
+            'HIGH' => $this->color($this->bold('HIGH'), self::RED),
+            'MEDIUM' => $this->color($this->bold('MEDIUM'), self::YELLOW),
+            default => $this->color('LOW', self::GRAY),
         };
     }
 
@@ -161,7 +184,7 @@ final class ConsoleOutput implements OutputInterface
             return $text;
         }
 
-        return $color . $text . self::COLOR_RESET;
+        return $color . $text . self::RESET;
     }
 
     private function bold(string $text): string
@@ -170,11 +193,6 @@ final class ConsoleOutput implements OutputInterface
             return $text;
         }
 
-        return self::COLOR_BOLD . $text . self::COLOR_RESET;
-    }
-
-    private function line(string $char, int $length): string
-    {
-        return '  ' . str_repeat($char, $length);
+        return self::BOLD . $text . self::RESET;
     }
 }

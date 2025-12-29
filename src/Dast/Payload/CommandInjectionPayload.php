@@ -11,6 +11,11 @@ use BEAR\Security\VulnerabilityInterface;
  */
 final class CommandInjectionPayload implements PayloadInterface
 {
+    public function getType(): string
+    {
+        return 'CommandInjection';
+    }
+
     public function getName(): string
     {
         return 'Command Injection';

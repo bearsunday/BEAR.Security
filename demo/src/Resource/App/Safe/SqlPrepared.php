@@ -21,10 +21,8 @@ class SqlPrepared extends ResourceObject
     ) {
     }
 
-    public function onGet(): static
+    public function onGet(string $id): static
     {
-        $id = $_GET['id'] ?? '';
-
         // SAFE: MediaQuery uses prepared statements
         // The $id is bound as a parameter, not concatenated
         $this->body = $this->sqlQuery->getRow('user_by_id', ['id' => $id]);
@@ -32,11 +30,8 @@ class SqlPrepared extends ResourceObject
         return $this;
     }
 
-    public function onPost(): static
+    public function onPost(string $name, string $email): static
     {
-        $name = $_POST['name'] ?? '';
-        $email = $_POST['email'] ?? '';
-
         // SAFE: All values are bound as parameters
         $this->sqlQuery->exec('user_insert', ['name' => $name, 'email' => $email]);
         $this->body = ['status' => 'created'];

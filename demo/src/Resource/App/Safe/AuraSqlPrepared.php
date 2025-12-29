@@ -22,10 +22,8 @@ class AuraSqlPrepared extends ResourceObject
     ) {
     }
 
-    public function onGet(): static
+    public function onGet(string $id): static
     {
-        $id = $_GET['id'] ?? '';
-
         // SAFE: Using perform() with bound values
         $stmt = $this->pdo->perform(
             'SELECT * FROM users WHERE id = :id',
@@ -36,10 +34,8 @@ class AuraSqlPrepared extends ResourceObject
         return $this;
     }
 
-    public function onPost(): static
+    public function onPost(string $name): static
     {
-        $name = $_POST['name'] ?? '';
-
         // SAFE: Using fetchAll() with bound values
         $this->body = $this->pdo->fetchAll(
             'SELECT * FROM users WHERE name = :name',
@@ -49,11 +45,8 @@ class AuraSqlPrepared extends ResourceObject
         return $this;
     }
 
-    public function onPut(): static
+    public function onPut(string $id, string $name): static
     {
-        $id = $_GET['id'] ?? '';
-        $name = $_GET['name'] ?? '';
-
         // SAFE: Using quote() for values
         $quotedName = $this->pdo->quote($name);
         $sql = "SELECT * FROM users WHERE name = {$quotedName} AND id = :id";

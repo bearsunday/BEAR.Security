@@ -13,22 +13,18 @@ use BEAR\Resource\ResourceObject;
  */
 class Ssrf extends ResourceObject
 {
-    public function onGet(): static
+    public function onGet(string $url): static
     {
-        $url = $_GET['url'] ?? '';
-
         // VULNERABLE: SSRF via file_get_contents
         $this->body['content'] = file_get_contents($url);
 
         return $this;
     }
 
-    public function onPost(): static
+    public function onPost(string $apiUrl): static
     {
-        $url = $_POST['api_url'] ?? '';
-
         // VULNERABLE: SSRF via curl
-        $ch = curl_init($url);
+        $ch = curl_init($apiUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $this->body['response'] = curl_exec($ch);
         curl_close($ch);
