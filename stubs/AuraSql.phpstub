@@ -43,4 +43,64 @@ interface ExtendedPdoInterface extends PdoInterface
      * @psalm-taint-escape sql
      */
     public function quoteSingleName(string $name): string;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchAffected(string $statement, array $values = []): int;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchAll(string $statement, array $values = []): array;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchAssoc(string $statement, array $values = []): array;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchCol(string $statement, array $values = []): array;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchGroup(string $statement, array $values = [], int $style = PDO::FETCH_COLUMN): array;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchObject(string $statement, array $values = [], string $class = 'stdClass', array $args = []): object|false;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchObjects(string $statement, array $values = [], string $class = 'stdClass', array $args = []): array;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchOne(string $statement, array $values = []): array|false;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchPairs(string $statement, array $values = []): array;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function fetchValue(string $statement, array $values = []): mixed;
 }
