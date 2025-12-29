@@ -44,4 +44,4 @@ class XmlResource extends ResourceObject
 }
 ```
 
-External entities are disabled by default, but using `LIBXML_NONET` makes the intent explicit. Consider using JSON instead of XML when possible.
+**Note:** In PHP 8.0+, external entity loading is disabled by default. `LIBXML_NONET` prevents network access but doesn't affect local file access - for complete protection, rely on PHP's default behavior. Adding `LIBXML_NONET` makes the intent explicit. Consider using JSON instead of XML when possible.

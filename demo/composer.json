@@ -1,12 +1,19 @@
 {
     "name": "bear/security-demo",
     "description": "BEAR.Security demo application",
+    "type": "project",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "BEAR\\Security\\Demo\\": "src/"
         }
     },
     "require": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "ext-pdo": "*"
+    },
+    "suggest": {
+        "twig/twig": "Required for TwigEscaped demo (^3.0)",
+        "qiq/qiq": "Required for QiqEscapedEcho demo (^3.0)"
     }
 }

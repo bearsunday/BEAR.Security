@@ -171,9 +171,9 @@ final class ConsoleOutput implements OutputInterface
     private function formatSeverityLabel(string $severity): string
     {
         return match ($severity) {
-            'CRITICAL' => $this->color($this->bold('CRITICAL'), self::BG_RED . self::WHITE),
-            'HIGH' => $this->color($this->bold('HIGH'), self::RED),
-            'MEDIUM' => $this->color($this->bold('MEDIUM'), self::YELLOW),
+            'CRITICAL' => $this->styledLabel('CRITICAL', self::BG_RED . self::WHITE . self::BOLD),
+            'HIGH' => $this->styledLabel('HIGH', self::RED . self::BOLD),
+            'MEDIUM' => $this->styledLabel('MEDIUM', self::YELLOW . self::BOLD),
             default => $this->color('LOW', self::GRAY),
         };
     }
@@ -187,12 +187,13 @@ final class ConsoleOutput implements OutputInterface
         return $color . $text . self::RESET;
     }
 
-    private function bold(string $text): string
+    /** Apply multiple styles in a single sequence (avoids nested RESET issues) */
+    private function styledLabel(string $text, string $styles): string
     {
         if (! $this->useColors) {
             return $text;
         }
 
-        return self::BOLD . $text . self::RESET;
+        return $styles . $text . self::RESET;
     }
 }
