@@ -164,8 +164,8 @@ class ScannerTest extends TestCase
 
         $formatted = $output->format($result);
 
-        $this->assertStringContainsString('BEAR Security Scanner', $formatted);
-        $this->assertStringContainsString('Summary', $formatted);
+        $this->assertStringContainsString('issues found', $formatted);
+        $this->assertStringContainsString('Scanned', $formatted);
     }
 
     public function testJsonOutput(): void

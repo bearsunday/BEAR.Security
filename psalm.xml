@@ -23,11 +23,6 @@
     </plugins>
     <issueHandlers>
         <!-- Demo code suppressions -->
-        <MissingConstructor>
-            <errorLevel type="suppress">
-                <directory name="demo"/>
-            </errorLevel>
-        </MissingConstructor>
         <PropertyNotSetInConstructor>
             <errorLevel type="suppress">
                 <directory name="demo"/>
@@ -61,23 +56,8 @@
             </errorLevel>
         </PossiblyUndefinedArrayOffset>
         <RiskyTruthyFalsyComparison errorLevel="suppress" />
-        <!-- BEAR\Resource is a suggested dependency, not required -->
-        <UndefinedClass>
-            <errorLevel type="suppress">
-                <file name="src/Dast/SecurityTest.php" />
-                <file name="src/Dast/SecurityWorkflowTest.php" />
-            </errorLevel>
-        </UndefinedClass>
-        <UndefinedDocblockClass>
-            <errorLevel type="suppress">
-                <file name="src/Dast/SecurityTest.php" />
-                <file name="src/Dast/SecurityWorkflowTest.php" />
-            </errorLevel>
-        </UndefinedDocblockClass>
         <MixedAssignment>
             <errorLevel type="suppress">
-                <file name="src/Dast/SecurityTest.php" />
-                <file name="src/Dast/SecurityWorkflowTest.php" />
                 <file name="src/Analyzer/ComposerAuditScanner.php" />
             </errorLevel>
         </MixedAssignment>
@@ -86,17 +66,6 @@
                 <file name="src/Analyzer/ComposerAuditScanner.php" />
             </errorLevel>
         </MixedArgumentTypeCoercion>
-        <MixedPropertyFetch>
-            <errorLevel type="suppress">
-                <file name="src/Dast/SecurityTest.php" />
-                <file name="src/Dast/SecurityWorkflowTest.php" />
-            </errorLevel>
-        </MixedPropertyFetch>
-        <MixedArgument>
-            <errorLevel type="suppress">
-                <file name="src/Dast/SecurityTest.php" />
-            </errorLevel>
-        </MixedArgument>
         <RedundantPropertyInitializationCheck>
             <errorLevel type="suppress">
                 <file name="src/Dast/SecurityTest.php" />
