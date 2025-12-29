@@ -3,3 +3,12 @@ description: Security scanner for BEAR.Sunday applications
 baseurl: "/BEAR.Security"
 url: "https://bearsunday.github.io"
 theme: minima
+
+# Only show main pages in header navigation
+header_pages: []
+
+defaults:
+  - scope:
+      path: "issues"
+    values:
+      nav_exclude: true
