@@ -44,10 +44,157 @@ blockquote {
   line-height: 1.6;
 }
 
-.highlighter-rouge .highlight,
-.highlighter-rouge .highlight pre.highlight,
-.highlighter-rouge .highlight pre.highlight code,
-.language-plaintext,
-.highlighter-rouge .highlight pre.highlight code span {
-  background-color: #f5f5f1;
+/* ===========================
+   php.net inspired style Syntax (from BEAR.Sunday manual)
+   =========================== */
+
+:root {
+    --bg-code: #fff;
+    --border-code: transparent;
+    --c-default: #0b3da6;
+    --c-keyword: #1a7f37;
+    --c-string: #c62828;
+    --c-comment: #bb5200;
+    --c-punc: #222222;
+    --c-func: #6b1b1b;
+    --c-number: #0a7a7a;
+    --bg-insert: #ddffdd;
+    --bg-delete: #ffdddd;
+}
+
+.highlight {
+    background: var(--bg-code);
+    color: var(--c-default);
+    border-radius: 6px;
+    color-scheme: light dark;
+}
+
+.highlight pre {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    tab-size: 2;
+    line-height: 1.5;
+}
+
+.highlight,
+.highlight pre,
+.highlight code {
+    font-variant-ligatures: none;
+}
+
+/* Comments */
+.highlight .c,
+.highlight .c1,
+.highlight .cm,
+.highlight .cs,
+.highlight .cp {
+    color: var(--c-comment);
+    font-style: normal;
+}
+
+/* Strings */
+.highlight .s,
+.highlight .s1,
+.highlight .s2,
+.highlight .sb,
+.highlight .sc,
+.highlight .sd,
+.highlight .se,
+.highlight .sh,
+.highlight .si,
+.highlight .sx,
+.highlight .sr {
+    color: var(--c-string);
+}
+
+/* Keywords */
+.highlight .k,
+.highlight .kd,
+.highlight .kn,
+.highlight .kp,
+.highlight .kr,
+.highlight .kt {
+    color: var(--c-keyword);
+    font-weight: normal;
+}
+
+/* Numbers */
+.highlight .m,
+.highlight .mi,
+.highlight .mf,
+.highlight .mh,
+.highlight .mo,
+.highlight .il {
+    color: var(--c-number);
+}
+
+/* Default (identifiers, operators, namespaces, etc.) */
+.highlight .n,
+.highlight .na,
+.highlight .nb,
+.highlight .bp,
+.highlight .nc,
+.highlight .no,
+.highlight .nv,
+.highlight .vc,
+.highlight .vg,
+.highlight .vi,
+.highlight .nn,
+.highlight .nx,
+.highlight .nt,
+.highlight .o,
+.highlight .p,
+.highlight .w {
+    color: var(--c-default);
+}
+
+/* Punctuation / operators */
+.highlight .p { color: var(--c-punc); }
+.highlight .o { color: var(--c-default); }
+
+/* Functions / attributes minimal emphasis */
+.highlight .na,
+.highlight .nd,
+.highlight .nf {
+    color: var(--c-default);
+    font-weight: normal;
+}
+
+/* JSON readability */
+.highlight .nt { color: var(--c-default); }
+.highlight .s  { color: var(--c-string); }
+.highlight .p  { color: var(--c-punc); }
+
+/* Generic (diff, error, headings, etc.) */
+.highlight .gd { color: #000; background: var(--bg-delete); }
+.highlight .gi { color: #000; background: var(--bg-insert); }
+.highlight .gr,
+.highlight .gt { color: #aa0000; }
+.highlight .gh,
+.highlight .gu { color: #9aa0a6; }
+.highlight .go { color: #888888; }
+.highlight .gp { color: #555555; }
+.highlight .gs { font-weight: bold; }
+.highlight .ge { font-style: italic; }
+
+/* Compatibility adjustments */
+.highlight .kc,
+.highlight .kd,
+.highlight .kp,
+.highlight .kr { font-weight: normal; }
+
+.highlight .kt { color: var(--c-keyword); font-weight: normal; }
+.highlight .nb,
+.highlight .bp { color: var(--c-default); }
+.highlight .nc { color: var(--c-default); font-weight: normal; }
+.highlight .ne { color: var(--c-func); font-weight: normal; }
+.highlight .nn { color: var(--c-default); }
+.highlight .nt { color: var(--c-default); }
+
+/* Forced colors mode (Windows High Contrast, etc.) */
+@media (forced-colors: active) {
+    .highlight { background: Canvas; color: CanvasText; }
+    .highlight .gd { background: none; outline: 2px solid ButtonBorder; }
+    .highlight .gi { background: none; outline: 2px solid Highlight; }
 }
