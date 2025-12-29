@@ -7,8 +7,10 @@ namespace BEAR\Security\Dast;
 use BEAR\Resource\ResourceInterface;
 use BEAR\Security\Dast\Analyzer\ResponseAnalyzer;
 use BEAR\Security\Dast\Payload\CommandInjectionPayload;
+use BEAR\Security\Dast\Payload\CsrfPayload;
 use BEAR\Security\Dast\Payload\PathTraversalPayload;
 use BEAR\Security\Dast\Payload\PayloadInterface;
+use BEAR\Security\Dast\Payload\RemoteFileInclusionPayload;
 use BEAR\Security\Dast\Payload\SqlInjectionPayload;
 use BEAR\Security\Dast\Payload\XssPayload;
 use BEAR\Security\ScanResult;
@@ -55,6 +57,8 @@ final class AutoDastScanner
             new XssPayload(),
             new CommandInjectionPayload(),
             new PathTraversalPayload(),
+            new RemoteFileInclusionPayload(),
+            new CsrfPayload(),
         ];
     }
 

@@ -35,9 +35,9 @@ class FileResource extends ResourceObject
 
     public function onGet(string $filename): static
     {
-        // 安全: realpath でパスを正規化して検証
+        // 安全: basename でディレクトリトラバーサルを除去し、realpath で検証
         $basePath = realpath(self::BASE_DIR);
-        $fullPath = realpath(self::BASE_DIR . '/' . $filename);
+        $fullPath = realpath(self::BASE_DIR . '/' . basename($filename));
 
         if ($fullPath === false || !str_starts_with($fullPath, $basePath)) {
             throw new NotFoundException('File not found');
