@@ -7,8 +7,6 @@ lang: en
 
 # Issue Types
 
-[← Back](..) | [日本語](../ja/) <small>(Press `j`)</small>
-
 ## Injection
 
 - [SqlInjection](sql-injection) - SQL injection vulnerability

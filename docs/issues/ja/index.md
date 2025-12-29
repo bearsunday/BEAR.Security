@@ -7,8 +7,6 @@ lang: ja
 
 # 問題タイプ
 
-[← 戻る](..) | [English](../en/) <small>(`e`キーで切替)</small>
-
 ## インジェクション
 
 - [SqlInjection](sql-injection) - SQLインジェクション
