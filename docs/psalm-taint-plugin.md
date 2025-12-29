@@ -4,35 +4,54 @@ Psalm taint analysis plugin for BEAR.Sunday framework.
 
 ## Overview
 
-BEAR.Sunday の `ResourceObject` は内部的に `call_user_func_array` を介して動的に実行されるため、Psalm の標準の taint analysis では `onGet`/`onPost` 等のメソッドパラメータが外部入力として認識されません。
+BEAR.Sunday's `ResourceObject` is dynamically invoked via `call_user_func_array`, which prevents Psalm's standard taint analysis from recognizing `onGet`/`onPost` method parameters as external input.
 
-このプラグインは、`ResourceObject` を継承したクラスの `on*` メソッドの全パラメータを自動的に taint source として登録し、E2E での脆弱性検出を可能にします。
+This plugin automatically registers all parameters of `on*` methods in `ResourceObject` subclasses as taint sources, enabling end-to-end vulnerability detection.
+
+## Installation
+
+Install BEAR.Security:
+
+```bash
+composer require --dev bear/security
+```
 
 ## Configuration
 
-`psalm.xml` にプラグインを追加:
+Add the following to your `psalm.xml`:
 
 ```xml
-<plugins>
-    <pluginClass class="BEAR\Security\Psalm\ResourceTaintPlugin">
-        <targets>
-            <target>Page</target>
-            <target>App</target>
-        </targets>
-    </pluginClass>
-</plugins>
+<?xml version="1.0"?>
+<psalm
+    errorLevel="2"
+    runTaintAnalysis="true"
+>
+    <projectFiles>
+        <directory name="src"/>
+    </projectFiles>
+    <plugins>
+        <pluginClass class="BEAR\Security\Psalm\ResourceTaintPlugin">
+            <targets>
+                <target>Page</target>
+                <target>App</target>
+            </targets>
+        </pluginClass>
+    </plugins>
+</psalm>
 ```
 
 ### Targets
 
-`targets` で汚染源とするリソースタイプを指定できます:
+Use `targets` to specify which resource types to treat as taint sources:
 
-- `Page` - `\Resource\Page\` 名前空間のリソース
-- `App` - `\Resource\App\` 名前空間のリソース
+- `Page` - Resources in `\Resource\Page\` namespace
+- `App` - Resources in `\Resource\App\` namespace
 
-デフォルトは両方が有効です。
+Both are enabled by default.
 
 ## Usage
+
+Run taint analysis:
 
 ```bash
 ./vendor/bin/psalm --taint-analysis
@@ -45,7 +64,7 @@ class User extends ResourceObject
 {
     public function onGet(string $id): static
     {
-        // TaintedSql が検出される！
+        // TaintedSql detected!
         $sql = "SELECT * FROM users WHERE id = '$id'";
         $this->pdo->query($sql);
 
@@ -61,7 +80,7 @@ class User extends ResourceObject
 {
     public function onGet(string $id): static
     {
-        // prepared statement で安全
+        // Safe with prepared statement
         $this->pdo->perform(
             'SELECT * FROM users WHERE id = :id',
             ['id' => $id]
@@ -98,26 +117,26 @@ class User extends ResourceObject
 
 ## Required Package Annotations
 
-このプラグインと組み合わせて使用する BEAR.Sunday エコシステムのパッケージには、taint annotation が必要です:
+The following BEAR.Sunday ecosystem packages require taint annotations to work with this plugin:
 
 | Package | Annotations | Status |
 |---------|-------------|--------|
 | bear/resource | `@psalm-taint-source input` | 1.29.0+ |
 | ray/media-query | `@psalm-taint-escape sql` | 1.0.2+ |
 | madapaja/twig-module | `@psalm-taint-escape html` | 2.7.0+ |
-| aura/sql | `@psalm-taint-sink sql`, `@psalm-taint-escape sql` | stub対応 |
-| qiq/qiq | `@psalm-taint-escape html` | stub対応 |
+| aura/sql | `@psalm-taint-sink sql`, `@psalm-taint-escape sql` | stub included |
+| qiq/qiq | `@psalm-taint-escape html` | stub included |
 
-aura/sql と qiq/qiq は正式リリースまで BEAR.Security 同梱の stub で対応しています。
+For aura/sql and qiq/qiq, BEAR.Security includes stubs until official releases.
 
 ## How It Works
 
-1. `AfterFunctionLikeAnalysisInterface` フックで `on*` メソッドの解析後に介入
-2. `ResourceObject` を継承したクラスかどうかを `classExtends` で判定
-3. 対象メソッドの全パラメータに `TaintKindGroup::ALL_INPUT` を付与した `TaintSource` を生成
-4. `taint_flow_graph->addSource()` でグラフに登録
+1. Hooks into `on*` method analysis via `AfterFunctionLikeAnalysisInterface`
+2. Checks if the class extends `ResourceObject` using `classExtends`
+3. Creates `TaintSource` with `TaintKindGroup::ALL_INPUT` for all method parameters
+4. Registers sources via `taint_flow_graph->addSource()`
 
-これにより、`call_user_func_array` による動的ディスパッチの制限を回避し、メソッドパラメータからシンク（`PDO::query()` 等）までの taint flow を追跡できます。
+This bypasses the `call_user_func_array` dynamic dispatch limitation and tracks taint flow from method parameters to sinks (e.g., `PDO::query()`).
 
 ## References
 
