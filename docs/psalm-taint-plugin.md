@@ -100,13 +100,15 @@ class User extends ResourceObject
 
 このプラグインと組み合わせて使用する BEAR.Sunday エコシステムのパッケージには、taint annotation が必要です:
 
-| Package | Annotations | PR |
-|---------|-------------|-----|
-| bear/resource | `@psalm-taint-source input` | [#343](https://github.com/bearsunday/BEAR.Resource/pull/343) |
-| ray/media-query | `@psalm-taint-escape sql` | [#78](https://github.com/ray-di/Ray.MediaQuery/pull/78) |
-| aura/sql | `@psalm-taint-sink sql`, `@psalm-taint-escape sql` | [#248](https://github.com/auraphp/Aura.Sql/pull/248) |
-| qiq/qiq | `@psalm-taint-escape html` | Already supported |
-| madapaja/twig-module | `@psalm-taint-escape html` | [#50](https://github.com/madapaja/Madapaja.TwigModule/pull/50) |
+| Package | Annotations | Status |
+|---------|-------------|--------|
+| bear/resource | `@psalm-taint-source input` | 1.29.0+ |
+| ray/media-query | `@psalm-taint-escape sql` | 1.0.2+ |
+| madapaja/twig-module | `@psalm-taint-escape html` | 2.7.0+ |
+| aura/sql | `@psalm-taint-sink sql`, `@psalm-taint-escape sql` | stub対応 |
+| qiq/qiq | `@psalm-taint-escape html` | stub対応 |
+
+aura/sql と qiq/qiq は正式リリースまで BEAR.Security 同梱の stub で対応しています。
 
 ## How It Works
 
