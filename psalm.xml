@@ -11,8 +11,33 @@
 >
     <projectFiles>
         <directory name="src" />
+        <directory name="demo/src" />
     </projectFiles>
+    <stubs>
+        <file name="stubs/PDO.phpstub"/>
+        <file name="stubs/AuraSql.phpstub"/>
+        <file name="stubs/Qiq.phpstub"/>
+    </stubs>
+    <plugins>
+        <pluginClass class="BEAR\Security\Psalm\ResourceTaintPlugin"/>
+    </plugins>
     <issueHandlers>
+        <!-- Demo code suppressions -->
+        <MissingConstructor>
+            <errorLevel type="suppress">
+                <directory name="demo"/>
+            </errorLevel>
+        </MissingConstructor>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <directory name="demo"/>
+            </errorLevel>
+        </PropertyNotSetInConstructor>
+        <NonInvariantDocblockPropertyType>
+            <errorLevel type="suppress">
+                <directory name="demo"/>
+            </errorLevel>
+        </NonInvariantDocblockPropertyType>
         <!-- PHP 8.3+ feature, not required for PHP 8.1 minimum -->
         <MissingOverrideAttribute errorLevel="suppress" />
         <!-- Pattern strings are validated at runtime -->

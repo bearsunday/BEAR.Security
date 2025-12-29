@@ -1,0 +1,18 @@
+# Exclude from release archives
+/demo export-ignore
+/tests export-ignore
+/docs export-ignore
+/stubs export-ignore
+/.github export-ignore
+/.idea export-ignore
+/build export-ignore
+/.phpunit.cache export-ignore
+/.phpunit.result.cache export-ignore
+/phpunit.xml.dist export-ignore
+/phpstan.neon export-ignore
+/psalm.xml export-ignore
+/infection.json5 export-ignore
+/CLAUDE.md export-ignore
+/CONTEXT.md export-ignore
+/SKILL.md export-ignore
+/coverage.xml export-ignore

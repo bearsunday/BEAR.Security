@@ -215,11 +215,13 @@ $scanner->addDetector(new CustomDetector());
 
 ## Psalm Taint Analysis
 
-This package has Psalm taint analysis enabled. Run separately for data flow analysis:
+This package includes a Psalm plugin for BEAR.Sunday taint analysis. It marks `ResourceObject::on*()` method parameters as taint sources, enabling end-to-end vulnerability detection.
 
 ```bash
 vendor/bin/psalm --taint-analysis
 ```
+
+See [Psalm Taint Plugin](docs/psalm-taint-plugin.md) for configuration and details.
 
 ## Requirements
 
@@ -228,6 +230,7 @@ vendor/bin/psalm --taint-analysis
 
 ## Documentation
 
+- [Psalm Taint Plugin](docs/psalm-taint-plugin.md) - Taint analysis for BEAR.Sunday ResourceObject
 - [Security through Architecture](docs/security-architecture.md) - Why BEAR.Sunday is secure by design
 - [Detection Matrix](docs/detection-matrix.md) - Full detection capability matrix
 - [Enterprise Tools Comparison](docs/comparison-enterprise.md) - vs Snyk, SonarQube, Checkmarx

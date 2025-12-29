@@ -1,0 +1,46 @@
+<?php
+/**
+ * Aura.Sql stub for Psalm taint analysis
+ * Until aura/sql releases with taint annotations
+ */
+
+namespace Aura\Sql;
+
+use PDO;
+use PDOStatement;
+
+interface PdoInterface
+{
+    /**
+     * @psalm-taint-sink sql $statement
+     */
+    public function exec(string $statement): int|false;
+
+    /**
+     * @psalm-taint-sink sql $query
+     */
+    public function prepare(string $query, array $options = []): PDOStatement|false;
+
+    /**
+     * @psalm-taint-sink sql $query
+     */
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetch_mode_args): PDOStatement|false;
+
+    /**
+     * @psalm-taint-escape sql
+     */
+    public function quote(string|int|array|float|null $value, int $type = PDO::PARAM_STR): string|false;
+}
+
+interface ExtendedPdoInterface extends PdoInterface
+{
+    /**
+     * @psalm-taint-escape sql
+     */
+    public function quoteName(string $name): string;
+
+    /**
+     * @psalm-taint-escape sql
+     */
+    public function quoteSingleName(string $name): string;
+}
