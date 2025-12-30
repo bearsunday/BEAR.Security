@@ -12,6 +12,17 @@
     <projectFiles>
         <directory name="src" />
         <directory name="demo/src" />
+        <ignoreFiles>
+            <!-- Files with optional dependencies (Qiq, Twig, Ray\MediaQuery, BEAR.Sunday Router) -->
+            <file name="demo/src/Resource/App/Safe/HtmlEscaped.php"/>
+            <file name="demo/src/Resource/App/Safe/QiqEscapedEcho.php"/>
+            <file name="demo/src/Resource/App/Safe/TwigEscaped.php"/>
+            <file name="demo/src/Resource/App/Safe/SqlPrepared.php"/>
+            <file name="demo/src/Resource/App/Safe/JsonRendererEcho.php"/>
+            <file name="demo/src/Bootstrap.php"/>
+            <file name="demo/src/Injector.php"/>
+            <directory name="demo/src/Module"/>
+        </ignoreFiles>
     </projectFiles>
     <stubs>
         <file name="stubs/PDO.phpstub"/>
