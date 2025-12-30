@@ -1,11 +1,11 @@
 ---
 layout: default
 nav_exclude: true
-title: 問題タイプ
+title: 検出タイプ
 lang: ja
 ---
 
-# 問題タイプ
+# 検出タイプ
 
 ## インジェクション
 
