@@ -32,7 +32,7 @@ final class CryptographicFailuresDetector extends AbstractDetector
             'recommendation' => 'Use password_hash() with PASSWORD_DEFAULT or PASSWORD_ARGON2ID',
         ],
         'WEAK_HASH_MD5_GENERAL' => [
-            'pattern' => '/\bmd5\s*\(/i',
+            'pattern' => '/(?<!\$|_)md5\s*\(\s*\$(?!cache|content|file|data|key|etag|checksum)/i',
             'severity' => VulnerabilityInterface::SEVERITY_MEDIUM,
             'description' => 'MD5 hash function used - weak for security purposes',
             'recommendation' => 'Use SHA-256 or stronger (hash("sha256", $data)) for integrity, password_hash() for passwords',
@@ -84,7 +84,7 @@ final class CryptographicFailuresDetector extends AbstractDetector
             'recommendation' => 'Store secrets in environment variables or use a secrets manager',
         ],
         'HARDCODED_DB_PASSWORD' => [
-            'pattern' => '/(?:define\s*\(\s*["\'](?:DB_PASSWORD|DATABASE_PASSWORD|MYSQL_PASSWORD)["\']|["\'](?:password|pwd)["\'])\s*(?:,|=>)\s*["\'][^"\']{4,}["\']/i',
+            'pattern' => '/(?:define\s*\(\s*["\'](?:DB_PASSWORD|DATABASE_PASSWORD|MYSQL_PASSWORD)["\']|["\'](?:password|pwd)["\'])\s*(?:,|=>)\s*["\'](?!YOUR_|REPLACE_|INSERT|EXAMPLE|changeme|password|xxx|<)[^"\']{4,}["\']/i',
             'severity' => VulnerabilityInterface::SEVERITY_CRITICAL,
             'description' => 'Hardcoded database password detected',
             'recommendation' => 'Use environment variables: getenv("DB_PASSWORD") or $_ENV["DB_PASSWORD"]',
