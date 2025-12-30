@@ -103,4 +103,51 @@ interface ExtendedPdoInterface extends PdoInterface
      * @psalm-taint-escape sql $values
      */
     public function fetchValue(string $statement, array $values = []): mixed;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function perform(string $statement, array $values = []): PDOStatement;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     */
+    public function prepareWithValues(string $statement, array $values = []): PDOStatement;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     * @return \Generator
+     */
+    public function yieldAll(string $statement, array $values = []): \Generator;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     * @return \Generator
+     */
+    public function yieldAssoc(string $statement, array $values = []): \Generator;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     * @return \Generator
+     */
+    public function yieldCol(string $statement, array $values = []): \Generator;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     * @return \Generator
+     */
+    public function yieldObjects(string $statement, array $values = [], string $class = 'stdClass', array $args = []): \Generator;
+
+    /**
+     * @psalm-taint-sink sql $statement
+     * @psalm-taint-escape sql $values
+     * @return \Generator
+     */
+    public function yieldPairs(string $statement, array $values = []): \Generator;
 }
