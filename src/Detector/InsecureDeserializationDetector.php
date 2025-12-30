@@ -13,6 +13,20 @@ use BEAR\Security\VulnerabilityInterface;
  * - Remote Code Execution (RCE)
  * - Denial of Service (DoS)
  * - Authentication bypass
+ *
+ * Detection Coverage:
+ * - Direct superglobal usage: unserialize($_POST['data'])
+ * - Wrapped patterns: unserialize(base64_decode(...))
+ * - File-based: unserialize(file_get_contents(...))
+ * - Variable usage: unserialize($userInput)
+ * - YAML parsing with user input
+ * - Dangerous magic methods (__wakeup, __destruct)
+ * - Phar deserialization attacks
+ *
+ * Limitations (requires AI audit for detection):
+ * - Multi-step data flow (variable assigned, then unserialized later)
+ * - Indirect user input via method parameters
+ * - Framework-specific deserialization (Laravel, Symfony)
  */
 final class InsecureDeserializationDetector extends AbstractDetector
 {

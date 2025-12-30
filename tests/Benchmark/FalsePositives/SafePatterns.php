@@ -409,6 +409,9 @@ class SafePatterns
 
     /**
      * Safe: DOMDocument with network access disabled
+     *
+     * LIBXML_NONET prevents loading external entities via network,
+     * which is the primary XXE attack vector.
      */
     public function xmlDomSafe(string $xml): \DOMDocument
     {
@@ -418,11 +421,13 @@ class SafePatterns
     }
 
     /**
-     * Safe: SimpleXML without entity expansion
+     * Safe: SimpleXML with network access disabled
+     *
+     * LIBXML_NONET prevents external entity loading via network,
+     * mitigating XXE attacks that require remote DTD fetching.
      */
     public function xmlSimpleSafe(string $xml): \SimpleXMLElement
     {
-        // LIBXML_NONET prevents network access
         $result = simplexml_load_string($xml, \SimpleXMLElement::class, LIBXML_NONET);
         return $result ?: new \SimpleXMLElement('<empty/>');
     }
