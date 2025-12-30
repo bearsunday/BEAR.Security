@@ -18,7 +18,9 @@
         "phpstan/phpstan": "^2.1",
         "vimeo/psalm": "^6.14",
         "infection/infection": "^0.31.9",
-        "bear/resource": "^1.28"
+        "bear/resource": "^1.28",
+        "aura/sql": "^6.0",
+        "bear/sunday": "^1.8"
     },
     "suggest": {
         "bear/devtools": "Required for DAST (Dynamic Application Security Testing) with HTTP workflow tests"
@@ -51,6 +53,7 @@
         "cs-fix": "phpcbf src tests",
         "phpstan": "phpstan analyse -c phpstan.neon",
         "psalm": "psalm --show-info=false",
+        "taint": "psalm --taint-analysis demo/src",
         "phpmd": "phpmd src text ./phpmd.xml",
         "baseline": "phpstan analyse -c phpstan.neon --generate-baseline --allow-empty-baseline && psalm --set-baseline=psalm-baseline.xml",
         "crc": "composer-require-checker check ./composer.json",

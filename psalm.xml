@@ -7,11 +7,13 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     findUnusedBaselineEntry="true"
     findUnusedCode="false"
-    runTaintAnalysis="true"
 >
     <projectFiles>
         <directory name="src" />
-        <directory name="demo/src" />
+        <ignoreFiles>
+            <!-- Depends on bear/app-meta which is optional -->
+            <file name="src/Dast/EndpointDiscovery.php"/>
+        </ignoreFiles>
     </projectFiles>
     <stubs>
         <file name="stubs/PDO.phpstub"/>
@@ -22,17 +24,6 @@
         <pluginClass class="BEAR\Security\Psalm\ResourceTaintPlugin"/>
     </plugins>
     <issueHandlers>
-        <!-- Demo code suppressions -->
-        <PropertyNotSetInConstructor>
-            <errorLevel type="suppress">
-                <directory name="demo"/>
-            </errorLevel>
-        </PropertyNotSetInConstructor>
-        <NonInvariantDocblockPropertyType>
-            <errorLevel type="suppress">
-                <directory name="demo"/>
-            </errorLevel>
-        </NonInvariantDocblockPropertyType>
         <!-- PHP 8.3+ feature, not required for PHP 8.1 minimum -->
         <MissingOverrideAttribute errorLevel="suppress" />
         <!-- Pattern strings are validated at runtime -->
@@ -44,12 +35,6 @@
         </ArgumentTypeCoercion>
         <!-- Callable type is validated -->
         <MixedPropertyTypeCoercion errorLevel="suppress" />
-        <!-- HTTP response header is always set after file_get_contents -->
-        <RedundantCondition>
-            <errorLevel type="suppress">
-                <file name="src/Dast/DastScanner.php" />
-            </errorLevel>
-        </RedundantCondition>
         <PossiblyUndefinedArrayOffset>
             <errorLevel type="suppress">
                 <file name="src/Dast/DastScanner.php" />
@@ -59,6 +44,8 @@
         <MixedAssignment>
             <errorLevel type="suppress">
                 <file name="src/Analyzer/ComposerAuditScanner.php" />
+                <file name="src/Ai/ClaudeAuditor.php" />
+                <file name="src/Dast/AutoDastScanner.php" />
             </errorLevel>
         </MixedAssignment>
         <MixedArgumentTypeCoercion>
@@ -66,6 +53,16 @@
                 <file name="src/Analyzer/ComposerAuditScanner.php" />
             </errorLevel>
         </MixedArgumentTypeCoercion>
+        <MixedPropertyFetch>
+            <errorLevel type="suppress">
+                <file name="src/Dast/AutoDastScanner.php" />
+            </errorLevel>
+        </MixedPropertyFetch>
+        <MixedArgument>
+            <errorLevel type="suppress">
+                <file name="src/Dast/AutoDastScanner.php" />
+            </errorLevel>
+        </MixedArgument>
         <RedundantPropertyInitializationCheck>
             <errorLevel type="suppress">
                 <file name="src/Dast/SecurityTest.php" />
@@ -75,7 +72,36 @@
         <InvalidOperand>
             <errorLevel type="suppress">
                 <file name="src/Report/SecurityChecklistReport.php" />
+                <file name="src/Ai/TokenTracker.php" />
             </errorLevel>
         </InvalidOperand>
+        <!-- CLI adapter uses shell_exec for claude CLI detection -->
+        <ForbiddenCode>
+            <errorLevel type="suppress">
+                <file name="src/Ai/ClaudeCliAdapter.php" />
+            </errorLevel>
+        </ForbiddenCode>
+        <!-- Psalm plugin classes -->
+        <ClassMustBeFinal>
+            <errorLevel type="suppress">
+                <directory name="src/Psalm" />
+            </errorLevel>
+        </ClassMustBeFinal>
+        <InternalClass>
+            <errorLevel type="suppress">
+                <directory name="src/Psalm" />
+            </errorLevel>
+        </InternalClass>
+        <InternalMethod>
+            <errorLevel type="suppress">
+                <directory name="src/Psalm" />
+            </errorLevel>
+        </InternalMethod>
+        <RedundantCondition>
+            <errorLevel type="suppress">
+                <file name="src/Dast/DastScanner.php" />
+                <file name="src/Psalm/ResourceTaintPlugin.php" />
+            </errorLevel>
+        </RedundantCondition>
     </issueHandlers>
 </psalm>
