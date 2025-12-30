@@ -3,22 +3,11 @@ parameters:
   paths:
     - src
     - tests
-    - demo
   excludePaths:
     - tests/Fixture/VulnerableApp/*
     - tests/Benchmark/*
     # EndpointDiscovery depends on bear/app-meta which is optional
     - src/Dast/EndpointDiscovery.php
-    # Demo bootstrap files depend on bear/sunday which is optional
-    - demo/src/Bootstrap.php
-    - demo/src/Injector.php
-    - demo/src/Module/*
-    # Demo files with optional dependencies (Qiq, Twig, Ray\MediaQuery)
-    - demo/src/Resource/App/Safe/HtmlEscaped.php
-    - demo/src/Resource/App/Safe/QiqEscapedEcho.php
-    - demo/src/Resource/App/Safe/TwigEscaped.php
-    - demo/src/Resource/App/Safe/SqlPrepared.php
-    - demo/src/Resource/App/Safe/JsonRendererEcho.php
   ignoreErrors:
     - '#Cannot cast mixed to string#'
     - '#Cannot access property \$code on mixed#'
@@ -31,13 +20,3 @@ parameters:
     -
       message: '#Cannot access offset .* on mixed#'
       path: tests/SecurityChecklistReportTest.php
-    # Demo files are intentionally simple for testing taint analysis
-    -
-      message: '#return type has no value type specified in iterable type#'
-      path: demo/*
-    -
-      message: '#Cannot call method .* on PDOStatement\|false#'
-      path: demo/*
-    -
-      message: '#Cannot access offset .* on mixed#'
-      path: demo/*
