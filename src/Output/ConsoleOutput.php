@@ -7,7 +7,6 @@ namespace BEAR\Security\Output;
 use BEAR\Security\ScanResult;
 use BEAR\Security\VulnerabilityInterface;
 
-use function explode;
 use function implode;
 use function preg_replace;
 use function sprintf;
@@ -17,16 +16,13 @@ use function strtoupper;
 use const PHP_EOL;
 
 /**
- * Console output formatter with Psalm-style colors
+ * Console output formatter with Psalm-style structure
  */
 final class ConsoleOutput implements OutputInterface
 {
     private const RESET = "\033[0m";
     private const RED = "\033[0;31m";
-    private const YELLOW = "\033[0;33m";
     private const GREEN = "\033[0;32m";
-    private const CYAN = "\033[0;36m";
-    private const GRAY = "\033[0;90m";
     private const BOLD = "\033[1m";
     private const BG_RED = "\033[41m";
     private const WHITE = "\033[0;37m";
@@ -77,11 +73,11 @@ final class ConsoleOutput implements OutputInterface
             }
 
             if ($medium > 0) {
-                $parts[] = $this->color("{$medium} medium", self::YELLOW);
+                $parts[] = $this->color("{$medium} medium", self::RED);
             }
 
             if ($low > 0) {
-                $parts[] = "{$low} low";
+                $parts[] = $this->color("{$low} low", self::RED);
             }
 
             $output .= sprintf(
@@ -91,10 +87,7 @@ final class ConsoleOutput implements OutputInterface
             );
         }
 
-        $output .= $this->color(
-            sprintf("Scanned %d endpoints in %.2fs", $files, $time),
-            self::GRAY,
-        ) . PHP_EOL;
+        $output .= sprintf("Scanned %d endpoints in %.2fs", $files, $time) . PHP_EOL;
 
         return $output;
     }
@@ -138,21 +131,13 @@ final class ConsoleOutput implements OutputInterface
 
         // Documentation link
         $docUrl = self::DOCS_URL . $this->typeToSlug($type);
-        $output .= $this->color(sprintf("  see %s\n", $docUrl), self::GRAY);
+        $output .= sprintf("  see %s\n", $docUrl);
 
         // Recommendation
         $output .= $this->color(
             sprintf("  %s\n", $vuln->getRecommendation()),
-            self::CYAN,
+            self::GREEN,
         );
-
-        // Code snippet with context
-        $snippet = $vuln->getCodeSnippet();
-        if ($snippet !== '') {
-            foreach (explode("\n", $snippet) as $line) {
-                $output .= $this->color("    {$line}\n", self::GRAY);
-            }
-        }
 
         $output .= PHP_EOL;
 
@@ -173,8 +158,8 @@ final class ConsoleOutput implements OutputInterface
         return match ($severity) {
             'CRITICAL' => $this->styledLabel('CRITICAL', self::BG_RED . self::WHITE . self::BOLD),
             'HIGH' => $this->styledLabel('HIGH', self::RED . self::BOLD),
-            'MEDIUM' => $this->styledLabel('MEDIUM', self::YELLOW . self::BOLD),
-            default => $this->color('LOW', self::GRAY),
+            'MEDIUM' => $this->styledLabel('MEDIUM', self::RED . self::BOLD),
+            default => $this->styledLabel('LOW', self::RED . self::BOLD),
         };
     }
 
