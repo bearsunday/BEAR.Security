@@ -20,9 +20,15 @@ final class DangerousFunctionDetector extends AbstractDetector
             'recommendation' => 'Avoid eval(); refactor to use safer alternatives like anonymous functions or data structures',
         ],
         'DANGEROUS_EXEC' => [
-            'pattern' => '/\b(?:exec|shell_exec|system|passthru|popen|proc_open)\s*\(/i',
+            'pattern' => '/(?<!->)\b(?:shell_exec|system|passthru|popen|proc_open)\s*\(/i',
             'severity' => VulnerabilityInterface::SEVERITY_MEDIUM,
             'description' => 'Shell command execution function detected',
+            'recommendation' => 'Use escapeshellarg()/escapeshellcmd() for input sanitization, or use safer alternatives',
+        ],
+        'DANGEROUS_EXEC_FUNC' => [
+            'pattern' => '/(?<!->)\bexec\s*\(/i',
+            'severity' => VulnerabilityInterface::SEVERITY_MEDIUM,
+            'description' => 'exec() function detected (not PDO::exec)',
             'recommendation' => 'Use escapeshellarg()/escapeshellcmd() for input sanitization, or use safer alternatives',
         ],
         'DANGEROUS_BACKTICK' => [
@@ -38,10 +44,10 @@ final class DangerousFunctionDetector extends AbstractDetector
             'recommendation' => 'Use anonymous functions (closures) instead - create_function is deprecated in PHP 7.2+',
         ],
         'DANGEROUS_UNSERIALIZE' => [
-            'pattern' => '/\bunserialize\s*\(/i',
+            'pattern' => '/\bunserialize\s*\(\s*[^,)]+\s*\)\s*;/i',
             'severity' => VulnerabilityInterface::SEVERITY_MEDIUM,
-            'description' => 'unserialize() usage detected - potential object injection',
-            'recommendation' => 'Use json_decode() for data deserialization, or specify allowed_classes parameter',
+            'description' => 'unserialize() without allowed_classes option',
+            'recommendation' => 'Use json_decode() or add allowed_classes: unserialize($data, ["allowed_classes" => false])',
         ],
         'DANGEROUS_PREG_REPLACE_E' => [
             'pattern' => '/preg_replace\s*\(\s*["\'][^"\']*\/e["\']/',

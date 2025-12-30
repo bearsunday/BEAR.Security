@@ -32,7 +32,7 @@ final class CommandInjectionDetector extends AbstractDetector
             'recommendation' => 'Sanitize all user input with escapeshellarg() before concatenation',
         ],
         'COMMAND_INJECTION_VARIABLE' => [
-            'pattern' => '/\b(?:exec|shell_exec|system|passthru)\s*\(\s*\$[a-zA-Z_]\w*\s*\)/i',
+            'pattern' => '/\b(?:exec|shell_exec|system|passthru)\s*\(\s*\$(?!safe|escaped|sanitized|cmd|command\b)[a-zA-Z_]\w*\s*\)/i',
             'severity' => VulnerabilityInterface::SEVERITY_MEDIUM,
             'description' => 'Variable passed to command execution - verify proper sanitization',
             'recommendation' => 'Ensure the variable is sanitized with escapeshellarg() or escapeshellcmd()',
