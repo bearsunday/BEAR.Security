@@ -5,6 +5,7 @@ parameters:
     - tests
   excludePaths:
     - tests/Fixture/VulnerableApp/*
+    - tests/Benchmark/*
   ignoreErrors:
     # BEAR\Resource is a suggested dependency, not required
     - '#class BEAR\\Resource\\ResourceInterface#'
