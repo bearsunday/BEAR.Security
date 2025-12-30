@@ -107,6 +107,7 @@ class AuraSqlTaintTest extends TestCase
         $this->assertFileExists($stubFile);
 
         $stubContent = file_get_contents($stubFile);
+        $this->assertIsString($stubContent);
 
         // PdoInterface methods
         $this->assertStringContainsString('function exec(', $stubContent);
@@ -149,6 +150,7 @@ class AuraSqlTaintTest extends TestCase
     {
         $stubFile = __DIR__ . '/../../stubs/AuraSql.phpstub';
         $stubContent = file_get_contents($stubFile);
+        $this->assertIsString($stubContent);
 
         // Count taint-sink annotations (for $statement parameter)
         preg_match_all('/@psalm-taint-sink sql/', $stubContent, $sinkMatches);

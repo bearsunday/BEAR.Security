@@ -6,6 +6,8 @@ parameters:
   excludePaths:
     - tests/Fixture/VulnerableApp/*
     - tests/Benchmark/*
+    # EndpointDiscovery depends on bear/app-meta which is optional
+    - src/Dast/EndpointDiscovery.php
   ignoreErrors:
     - '#Cannot cast mixed to string#'
     - '#Cannot access property \$code on mixed#'
