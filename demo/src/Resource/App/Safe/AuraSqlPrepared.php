@@ -74,6 +74,24 @@ class AuraSqlPrepared extends ResourceObject
         return $this;
     }
 
+    public function onDelete(string $column): static
+    {
+        // SAFE: Using quoteName() for identifier escaping
+        $quotedColumn = $this->pdo->quoteName($column);
+        $this->body = $this->pdo->fetchAll("SELECT {$quotedColumn} FROM users");
+
+        return $this;
+    }
+
+    public function onOptions(string $table): static
+    {
+        // SAFE: Using quoteSingleName() for table name escaping
+        $quotedTable = $this->pdo->quoteSingleName($table);
+        $this->body = $this->pdo->fetchAll("SELECT * FROM {$quotedTable}");
+
+        return $this;
+    }
+
     // =========================================================================
     // ExtendedPdoInterface fetch* methods - safe usage with $values
     // =========================================================================

@@ -20,7 +20,9 @@ class AuraSqlTaintTest extends TestCase
 {
     private const PSALM_BIN = __DIR__ . '/../../vendor/bin/psalm';
     private const VULNERABLE_FILE = __DIR__ . '/../../demo/src/Resource/App/Vulnerable/AuraSqlInjection.php';
+    private const VULNERABLE_EDGE_CASES = __DIR__ . '/../../demo/src/Resource/App/Vulnerable/AuraSqlEdgeCases.php';
     private const SAFE_FILE = __DIR__ . '/../../demo/src/Resource/App/Safe/AuraSqlPrepared.php';
+    private const SAFE_EDGE_CASES = __DIR__ . '/../../demo/src/Resource/App/Safe/AuraSqlEdgeCases.php';
 
     /**
      * Test that vulnerable patterns are detected
@@ -60,6 +62,37 @@ class AuraSqlTaintTest extends TestCase
 
         $this->assertSame(0, $errorCount, sprintf(
             "Expected 0 TaintedSql errors for safe patterns, got %d.\nOutput:\n%s",
+            $errorCount,
+            $output
+        ));
+    }
+
+    /**
+     * Test vulnerable edge cases (heredoc, interpolation, various methods)
+     */
+    public function testVulnerableEdgeCasesDetected(): void
+    {
+        $output = $this->runPsalmTaintAnalysis(self::VULNERABLE_EDGE_CASES);
+        $errorCount = $this->countTaintedSqlErrors($output);
+
+        // Should detect all 5 edge case patterns
+        $this->assertSame(5, $errorCount, sprintf(
+            "Expected 5 TaintedSql errors for edge cases, got %d.\nOutput:\n%s",
+            $errorCount,
+            $output
+        ));
+    }
+
+    /**
+     * Test safe edge cases (variable escaping, chaining, multiple bindings)
+     */
+    public function testSafeEdgeCasesNotFlagged(): void
+    {
+        $output = $this->runPsalmTaintAnalysis(self::SAFE_EDGE_CASES);
+        $errorCount = $this->countTaintedSqlErrors($output);
+
+        $this->assertSame(0, $errorCount, sprintf(
+            "Expected 0 TaintedSql errors for safe edge cases, got %d.\nOutput:\n%s",
             $errorCount,
             $output
         ));
