@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Medium;
 
 /**
  * Auto-generated scale test file
@@ -21,91 +21,40 @@ class ScaleTest28
     }
 
     /**
-     * Vulnerable: path injection
-     */
-    public function vulnerablepath3(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        require($_POST['module']);
-    }
-
-    /**
-     * Vulnerable: deserialize injection
-     */
-    public function vulnerabledeserialize4(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        unserialize($_COOKIE['data']);
-    }
-
-    protected function validate1(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    protected function validate4(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    public function safeMethod3(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    /**
-     * Vulnerable: sql injection
-     */
-    public function vulnerablesql0(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        $query = "SELECT * FROM users WHERE id = " . $_GET['id'];
-    }
-
-    /**
      * Vulnerable: xss injection
      */
     public function vulnerablexss1(): void
     {
         // Intentionally vulnerable for benchmarking
-        print($_REQUEST['output']);
+        echo $_GET['message'];
     }
 
-    public function safeMethod6(): void
+    /**
+     * Vulnerable: path injection
+     */
+    public function vulnerablepath3(): void
     {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+        // Intentionally vulnerable for benchmarking
+        file_get_contents($_GET['file']);
     }
 
-    protected function validate7(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    public function safeMethod8(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    protected function validate2(string $input): bool
+    protected function validate3(string $input): bool
     {
         return strlen($input) > 0;
     }
 
-    public function safeMethod5(): void
+    public function safeMethod4(): void
     {
         $data = ['key' => 'value'];
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
     }
 
-    private function helper0(int $id): int
+    private function helper5(int $id): int
     {
         return $id * 2;
     }
 
-    public function safeMethod9(): void
+    public function safeMethod8(): void
     {
         $data = ['key' => 'value'];
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
@@ -117,6 +66,57 @@ class ScaleTest28
     public function vulnerablecmd2(): void
     {
         // Intentionally vulnerable for benchmarking
-        system("ping " . $_GET['host']);
+        exec("ls " . $_GET['path']);
+    }
+
+    private function helper7(int $id): int
+    {
+        return $id * 2;
+    }
+
+    /**
+     * Vulnerable: sql injection
+     */
+    public function vulnerablesql0(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        $query = "SELECT * FROM users WHERE id = " . $_GET['id'];
+    }
+
+    protected function validate9(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    /**
+     * Vulnerable: deserialize injection
+     */
+    public function vulnerabledeserialize4(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        unserialize($_COOKIE['data']);
+    }
+
+    public function safeMethod6(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    public function safeMethod0(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    protected function validate2(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    public function safeMethod1(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
     }
 }

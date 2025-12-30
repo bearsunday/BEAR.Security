@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Small;
 
 /**
  * Auto-generated scale test file
@@ -26,7 +26,7 @@ class ScaleTest5
     public function vulnerablexss1(): void
     {
         // Intentionally vulnerable for benchmarking
-        print($_REQUEST['output']);
+        echo "<div>" . $_POST['content'] . "</div>";
     }
 
     /**
@@ -35,7 +35,22 @@ class ScaleTest5
     public function vulnerabledeserialize4(): void
     {
         // Intentionally vulnerable for benchmarking
-        unserialize(base64_decode($_POST['obj']));
+        unserialize($_COOKIE['data']);
+    }
+
+    /**
+     * Vulnerable: cmd injection
+     */
+    public function vulnerablecmd2(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        exec("ls " . $_GET['path']);
+    }
+
+    public function safeMethod3(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
     }
 
     /**
@@ -53,26 +68,7 @@ class ScaleTest5
     public function vulnerablepath3(): void
     {
         // Intentionally vulnerable for benchmarking
-        require($_POST['module']);
-    }
-
-    /**
-     * Vulnerable: cmd injection
-     */
-    public function vulnerablecmd2(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        exec("ls " . $_GET['path']);
-    }
-
-    protected function validate3(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    protected function validate1(string $input): bool
-    {
-        return strlen($input) > 0;
+        include($_GET['page']);
     }
 
     public function safeMethod0(): void
@@ -81,8 +77,14 @@ class ScaleTest5
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
     }
 
-    private function helper2(int $id): int
+    public function safeMethod1(): void
     {
-        return $id * 2;
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    protected function validate2(string $input): bool
+    {
+        return strlen($input) > 0;
     }
 }

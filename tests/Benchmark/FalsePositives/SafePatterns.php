@@ -408,24 +408,23 @@ class SafePatterns
     // =========================================================================
 
     /**
-     * Safe: libxml_disable_entity_loader (deprecated but still pattern)
-     */
-    public function xmlDisableEntities(string $xml): \SimpleXMLElement
-    {
-        $previous = libxml_disable_entity_loader(true);
-        $result = simplexml_load_string($xml, \SimpleXMLElement::class, LIBXML_NOENT);
-        libxml_disable_entity_loader($previous);
-        return $result ?: new \SimpleXMLElement('<empty/>');
-    }
-
-    /**
-     * Safe: DOMDocument with entity substitution disabled
+     * Safe: DOMDocument with network access disabled
      */
     public function xmlDomSafe(string $xml): \DOMDocument
     {
         $doc = new \DOMDocument();
-        $doc->loadXML($xml, LIBXML_NOENT | LIBXML_DTDLOAD);
+        $doc->loadXML($xml, LIBXML_NONET);
         return $doc;
+    }
+
+    /**
+     * Safe: SimpleXML without entity expansion
+     */
+    public function xmlSimpleSafe(string $xml): \SimpleXMLElement
+    {
+        // LIBXML_NONET prevents network access
+        $result = simplexml_load_string($xml, \SimpleXMLElement::class, LIBXML_NONET);
+        return $result ?: new \SimpleXMLElement('<empty/>');
     }
 
     // =========================================================================

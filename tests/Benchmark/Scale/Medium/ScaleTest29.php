@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Medium;
 
 /**
  * Auto-generated scale test file
@@ -20,13 +20,30 @@ class ScaleTest29
         $this->pdo = new \PDO('sqlite::memory:');
     }
 
+    public function safeMethod6(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
     /**
-     * Vulnerable: path injection
+     * Vulnerable: deserialize injection
      */
-    public function vulnerablepath3(): void
+    public function vulnerabledeserialize4(): void
     {
         // Intentionally vulnerable for benchmarking
-        require($_POST['module']);
+        unserialize($_COOKIE['data']);
+    }
+
+    public function safeMethod7(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    private function helper9(int $id): int
+    {
+        return $id * 2;
     }
 
     /**
@@ -44,34 +61,7 @@ class ScaleTest29
     public function vulnerablexss1(): void
     {
         // Intentionally vulnerable for benchmarking
-        print($_REQUEST['output']);
-    }
-
-    private function helper7(int $id): int
-    {
-        return $id * 2;
-    }
-
-    public function safeMethod2(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    private function helper3(int $id): int
-    {
-        return $id * 2;
-    }
-
-    public function safeMethod6(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    private function helper5(int $id): int
-    {
-        return $id * 2;
+        echo $_GET['message'];
     }
 
     /**
@@ -80,25 +70,35 @@ class ScaleTest29
     public function vulnerablesql0(): void
     {
         // Intentionally vulnerable for benchmarking
-        $sql = "DELETE FROM items WHERE id = " . $_REQUEST['id'];
+        $this->pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
     }
 
-    public function safeMethod1(): void
+    /**
+     * Vulnerable: path injection
+     */
+    public function vulnerablepath3(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        file_get_contents($_GET['file']);
+    }
+
+    protected function validate0(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    public function safeMethod2(): void
     {
         $data = ['key' => 'value'];
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
     }
 
-    /**
-     * Vulnerable: deserialize injection
-     */
-    public function vulnerabledeserialize4(): void
+    protected function validate8(string $input): bool
     {
-        // Intentionally vulnerable for benchmarking
-        unserialize($_COOKIE['data']);
+        return strlen($input) > 0;
     }
 
-    protected function validate8(string $input): bool
+    protected function validate1(string $input): bool
     {
         return strlen($input) > 0;
     }
@@ -108,12 +108,12 @@ class ScaleTest29
         return $id * 2;
     }
 
-    private function helper9(int $id): int
+    protected function validate5(string $input): bool
     {
-        return $id * 2;
+        return strlen($input) > 0;
     }
 
-    private function helper0(int $id): int
+    private function helper3(int $id): int
     {
         return $id * 2;
     }

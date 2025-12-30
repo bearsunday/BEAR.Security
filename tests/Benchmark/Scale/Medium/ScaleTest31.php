@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Medium;
 
 /**
  * Auto-generated scale test file
@@ -20,7 +20,30 @@ class ScaleTest31
         $this->pdo = new \PDO('sqlite::memory:');
     }
 
-    protected function validate2(string $input): bool
+    /**
+     * Vulnerable: deserialize injection
+     */
+    public function vulnerabledeserialize4(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        unserialize($_COOKIE['data']);
+    }
+
+    private function helper6(int $id): int
+    {
+        return $id * 2;
+    }
+
+    /**
+     * Vulnerable: sql injection
+     */
+    public function vulnerablesql0(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        $this->pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
+    }
+
+    protected function validate0(string $input): bool
     {
         return strlen($input) > 0;
     }
@@ -30,10 +53,9 @@ class ScaleTest31
         return $id * 2;
     }
 
-    public function safeMethod5(): void
+    private function helper5(int $id): int
     {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+        return $id * 2;
     }
 
     /**
@@ -42,66 +64,7 @@ class ScaleTest31
     public function vulnerablexss1(): void
     {
         // Intentionally vulnerable for benchmarking
-        echo $_GET['message'];
-    }
-
-    /**
-     * Vulnerable: sql injection
-     */
-    public function vulnerablesql0(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        $pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
-    }
-
-    /**
-     * Vulnerable: deserialize injection
-     */
-    public function vulnerabledeserialize4(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        unserialize(base64_decode($_POST['obj']));
-    }
-
-    private function helper1(int $id): int
-    {
-        return $id * 2;
-    }
-
-    public function safeMethod3(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    protected function validate6(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    /**
-     * Vulnerable: path injection
-     */
-    public function vulnerablepath3(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        file_get_contents($_GET['file']);
-    }
-
-    protected function validate9(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    public function safeMethod4(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    private function helper8(int $id): int
-    {
-        return $id * 2;
+        print($_REQUEST['output']);
     }
 
     /**
@@ -110,11 +73,48 @@ class ScaleTest31
     public function vulnerablecmd2(): void
     {
         // Intentionally vulnerable for benchmarking
-        system("ping " . $_GET['host']);
+        shell_exec("cat " . $_POST['file']);
     }
 
-    private function helper0(int $id): int
+    protected function validate4(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    protected function validate1(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    public function safeMethod8(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    /**
+     * Vulnerable: path injection
+     */
+    public function vulnerablepath3(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        require($_POST['module']);
+    }
+
+    private function helper3(int $id): int
     {
         return $id * 2;
+    }
+
+    public function safeMethod2(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    public function safeMethod9(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
     }
 }

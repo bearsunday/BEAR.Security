@@ -44,13 +44,7 @@ final class DangerousFunctionDetector extends AbstractDetector
             'recommendation' => 'Use anonymous functions (closures) instead - create_function is deprecated in PHP 7.2+',
         ],
         'DANGEROUS_UNSERIALIZE' => [
-            'pattern' => '/\bunserialize\s*\([^)]*\)(?!\s*;|\s*\)|\s*,|\s*\]|\s*\})\s*(?!.*allowed_classes)/i',
-            'severity' => VulnerabilityInterface::SEVERITY_MEDIUM,
-            'description' => 'unserialize() usage detected - potential object injection',
-            'recommendation' => 'Use json_decode() for data deserialization, or specify allowed_classes parameter',
-        ],
-        'DANGEROUS_UNSERIALIZE_NO_OPTIONS' => [
-            'pattern' => '/\bunserialize\s*\(\s*\$[^,)]+\s*\)\s*;/i',
+            'pattern' => '/\bunserialize\s*\(\s*[^,)]+\s*\)\s*;/i',
             'severity' => VulnerabilityInterface::SEVERITY_MEDIUM,
             'description' => 'unserialize() without allowed_classes option',
             'recommendation' => 'Use json_decode() or add allowed_classes: unserialize($data, ["allowed_classes" => false])',

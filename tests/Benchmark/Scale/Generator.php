@@ -20,7 +20,7 @@ class Generator
     private const VULNERABILITY_TEMPLATES = [
         'sql' => [
             '$query = "SELECT * FROM users WHERE id = " . $_GET[\'id\'];',
-            '$pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST[\'user\']);',
+            '$this->pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST[\'user\']);',
             '$sql = "DELETE FROM items WHERE id = " . $_REQUEST[\'id\'];',
         ],
         'xss' => [
@@ -69,15 +69,16 @@ class Generator
         }
 
         $totalVulns = 0;
+        $subNamespace = ucfirst($size);
         for ($i = 1; $i <= $config['files']; $i++) {
-            $vulns = $this->generateFile($dir, $i, $config);
+            $vulns = $this->generateFile($dir, $i, $config, $subNamespace);
             $totalVulns += $vulns;
         }
 
         echo "Generated {$config['files']} files with $totalVulns vulnerabilities in $dir\n";
     }
 
-    private function generateFile(string $dir, int $index, array $config): int
+    private function generateFile(string $dir, int $index, array $config, string $subNamespace): int
     {
         $className = "ScaleTest{$index}";
         $filename = "{$dir}/{$className}.php";
@@ -103,7 +104,7 @@ class Generator
 
         shuffle($methods);
 
-        $content = $this->buildClassFile($className, $methods);
+        $content = $this->buildClassFile($className, $methods, $subNamespace);
         file_put_contents($filename, $content);
 
         return $vulnCount;
@@ -134,7 +135,7 @@ class Generator
 PHP;
     }
 
-    private function buildClassFile(string $className, array $methods): string
+    private function buildClassFile(string $className, array $methods, string $subNamespace): string
     {
         $methodsStr = implode("\n\n", $methods);
 
@@ -143,7 +144,7 @@ PHP;
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\\{$subNamespace};
 
 /**
  * Auto-generated scale test file

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Small;
 
 /**
  * Auto-generated scale test file
@@ -20,10 +20,18 @@ class ScaleTest8
         $this->pdo = new \PDO('sqlite::memory:');
     }
 
-    public function safeMethod0(): void
+    protected function validate3(string $input): bool
     {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+        return strlen($input) > 0;
+    }
+
+    /**
+     * Vulnerable: path injection
+     */
+    public function vulnerablepath3(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        require($_POST['module']);
     }
 
     /**
@@ -32,7 +40,7 @@ class ScaleTest8
     public function vulnerablexss1(): void
     {
         // Intentionally vulnerable for benchmarking
-        echo $_GET['message'];
+        echo "<div>" . $_POST['content'] . "</div>";
     }
 
     /**
@@ -41,7 +49,13 @@ class ScaleTest8
     public function vulnerabledeserialize4(): void
     {
         // Intentionally vulnerable for benchmarking
-        unserialize($_COOKIE['data']);
+        unserialize(base64_decode($_POST['obj']));
+    }
+
+    public function safeMethod2(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
     }
 
     /**
@@ -50,15 +64,10 @@ class ScaleTest8
     public function vulnerablesql0(): void
     {
         // Intentionally vulnerable for benchmarking
-        $pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
+        $query = "SELECT * FROM users WHERE id = " . $_GET['id'];
     }
 
     protected function validate1(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    protected function validate3(string $input): bool
     {
         return strlen($input) > 0;
     }
@@ -69,20 +78,11 @@ class ScaleTest8
     public function vulnerablecmd2(): void
     {
         // Intentionally vulnerable for benchmarking
-        exec("ls " . $_GET['path']);
+        shell_exec("cat " . $_POST['file']);
     }
 
-    private function helper2(int $id): int
+    private function helper0(int $id): int
     {
         return $id * 2;
-    }
-
-    /**
-     * Vulnerable: path injection
-     */
-    public function vulnerablepath3(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        include($_GET['page']);
     }
 }

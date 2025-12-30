@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Medium;
 
 /**
  * Auto-generated scale test file
@@ -20,66 +20,29 @@ class ScaleTest12
         $this->pdo = new \PDO('sqlite::memory:');
     }
 
+    public function safeMethod6(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
     /**
      * Vulnerable: sql injection
      */
     public function vulnerablesql0(): void
     {
         // Intentionally vulnerable for benchmarking
-        $pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
+        $sql = "DELETE FROM items WHERE id = " . $_REQUEST['id'];
     }
 
-    private function helper9(int $id): int
+    private function helper2(int $id): int
     {
         return $id * 2;
     }
 
-    protected function validate0(string $input): bool
+    protected function validate3(string $input): bool
     {
         return strlen($input) > 0;
-    }
-
-    public function safeMethod4(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    protected function validate7(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    /**
-     * Vulnerable: xss injection
-     */
-    public function vulnerablexss1(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        echo $_GET['message'];
-    }
-
-    protected function validate6(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    /**
-     * Vulnerable: cmd injection
-     */
-    public function vulnerablecmd2(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        system("ping " . $_GET['host']);
-    }
-
-    /**
-     * Vulnerable: path injection
-     */
-    public function vulnerablepath3(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        file_get_contents($_GET['file']);
     }
 
     /**
@@ -91,17 +54,32 @@ class ScaleTest12
         unserialize($_COOKIE['data']);
     }
 
-    protected function validate3(string $input): bool
+    private function helper9(int $id): int
     {
-        return strlen($input) > 0;
+        return $id * 2;
     }
 
-    protected function validate2(string $input): bool
+    /**
+     * Vulnerable: cmd injection
+     */
+    public function vulnerablecmd2(): void
     {
-        return strlen($input) > 0;
+        // Intentionally vulnerable for benchmarking
+        system("ping " . $_GET['host']);
     }
 
-    private function helper5(int $id): int
+    public function safeMethod0(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    private function helper4(int $id): int
+    {
+        return $id * 2;
+    }
+
+    private function helper8(int $id): int
     {
         return $id * 2;
     }
@@ -111,9 +89,31 @@ class ScaleTest12
         return strlen($input) > 0;
     }
 
-    public function safeMethod8(): void
+    protected function validate5(string $input): bool
     {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+        return strlen($input) > 0;
+    }
+
+    /**
+     * Vulnerable: path injection
+     */
+    public function vulnerablepath3(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        file_get_contents($_GET['file']);
+    }
+
+    private function helper7(int $id): int
+    {
+        return $id * 2;
+    }
+
+    /**
+     * Vulnerable: xss injection
+     */
+    public function vulnerablexss1(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        echo "<div>" . $_POST['content'] . "</div>";
     }
 }

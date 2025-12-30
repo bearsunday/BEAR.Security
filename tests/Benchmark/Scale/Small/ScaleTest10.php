@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Small;
 
 /**
  * Auto-generated scale test file
@@ -20,7 +20,16 @@ class ScaleTest10
         $this->pdo = new \PDO('sqlite::memory:');
     }
 
-    public function safeMethod2(): void
+    /**
+     * Vulnerable: sql injection
+     */
+    public function vulnerablesql0(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        $this->pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
+    }
+
+    public function safeMethod1(): void
     {
         $data = ['key' => 'value'];
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
@@ -32,16 +41,16 @@ class ScaleTest10
     public function vulnerablexss1(): void
     {
         // Intentionally vulnerable for benchmarking
-        echo "<div>" . $_POST['content'] . "</div>";
+        print($_REQUEST['output']);
     }
 
     /**
-     * Vulnerable: sql injection
+     * Vulnerable: cmd injection
      */
-    public function vulnerablesql0(): void
+    public function vulnerablecmd2(): void
     {
         // Intentionally vulnerable for benchmarking
-        $sql = "DELETE FROM items WHERE id = " . $_REQUEST['id'];
+        system("ping " . $_GET['host']);
     }
 
     private function helper3(int $id): int
@@ -58,16 +67,9 @@ class ScaleTest10
         unserialize(base64_decode($_POST['obj']));
     }
 
-    public function safeMethod1(): void
+    private function helper2(int $id): int
     {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    public function safeMethod0(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+        return $id * 2;
     }
 
     /**
@@ -76,15 +78,11 @@ class ScaleTest10
     public function vulnerablepath3(): void
     {
         // Intentionally vulnerable for benchmarking
-        require($_POST['module']);
+        file_get_contents($_GET['file']);
     }
 
-    /**
-     * Vulnerable: cmd injection
-     */
-    public function vulnerablecmd2(): void
+    protected function validate0(string $input): bool
     {
-        // Intentionally vulnerable for benchmarking
-        system("ping " . $_GET['host']);
+        return strlen($input) > 0;
     }
 }

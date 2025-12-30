@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Small;
 
 /**
  * Auto-generated scale test file
@@ -20,33 +20,14 @@ class ScaleTest7
         $this->pdo = new \PDO('sqlite::memory:');
     }
 
-    protected function validate1(string $input): bool
+    protected function validate3(string $input): bool
     {
         return strlen($input) > 0;
     }
 
-    /**
-     * Vulnerable: xss injection
-     */
-    public function vulnerablexss1(): void
+    protected function validate0(string $input): bool
     {
-        // Intentionally vulnerable for benchmarking
-        print($_REQUEST['output']);
-    }
-
-    public function safeMethod2(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    /**
-     * Vulnerable: path injection
-     */
-    public function vulnerablepath3(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        include($_GET['page']);
+        return strlen($input) > 0;
     }
 
     /**
@@ -68,6 +49,25 @@ class ScaleTest7
     }
 
     /**
+     * Vulnerable: path injection
+     */
+    public function vulnerablepath3(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        include($_GET['page']);
+    }
+
+    private function helper2(int $id): int
+    {
+        return $id * 2;
+    }
+
+    private function helper1(int $id): int
+    {
+        return $id * 2;
+    }
+
+    /**
      * Vulnerable: sql injection
      */
     public function vulnerablesql0(): void
@@ -76,14 +76,12 @@ class ScaleTest7
         $query = "SELECT * FROM users WHERE id = " . $_GET['id'];
     }
 
-    public function safeMethod3(): void
+    /**
+     * Vulnerable: xss injection
+     */
+    public function vulnerablexss1(): void
     {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    protected function validate0(string $input): bool
-    {
-        return strlen($input) > 0;
+        // Intentionally vulnerable for benchmarking
+        print($_REQUEST['output']);
     }
 }

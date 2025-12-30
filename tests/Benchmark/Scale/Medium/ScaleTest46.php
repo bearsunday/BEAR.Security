@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Medium;
 
 /**
  * Auto-generated scale test file
@@ -20,25 +20,7 @@ class ScaleTest46
         $this->pdo = new \PDO('sqlite::memory:');
     }
 
-    /**
-     * Vulnerable: xss injection
-     */
-    public function vulnerablexss1(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        echo "<div>" . $_POST['content'] . "</div>";
-    }
-
-    /**
-     * Vulnerable: sql injection
-     */
-    public function vulnerablesql0(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        $pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
-    }
-
-    private function helper6(int $id): int
+    private function helper3(int $id): int
     {
         return $id * 2;
     }
@@ -52,13 +34,41 @@ class ScaleTest46
         unserialize(base64_decode($_POST['obj']));
     }
 
-    public function safeMethod1(): void
+    /**
+     * Vulnerable: cmd injection
+     */
+    public function vulnerablecmd2(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        exec("ls " . $_GET['path']);
+    }
+
+    protected function validate4(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    /**
+     * Vulnerable: path injection
+     */
+    public function vulnerablepath3(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        file_get_contents($_GET['file']);
+    }
+
+    public function safeMethod0(): void
     {
         $data = ['key' => 'value'];
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
     }
 
-    private function helper7(int $id): int
+    private function helper1(int $id): int
+    {
+        return $id * 2;
+    }
+
+    private function helper9(int $id): int
     {
         return $id * 2;
     }
@@ -68,53 +78,43 @@ class ScaleTest46
         return $id * 2;
     }
 
-    private function helper5(int $id): int
+    public function safeMethod5(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    private function helper6(int $id): int
     {
         return $id * 2;
     }
 
-    protected function validate3(string $input): bool
+    /**
+     * Vulnerable: sql injection
+     */
+    public function vulnerablesql0(): void
     {
-        return strlen($input) > 0;
+        // Intentionally vulnerable for benchmarking
+        $this->pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
     }
 
-    public function safeMethod4(): void
+    public function safeMethod7(): void
     {
         $data = ['key' => 'value'];
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
     }
 
     /**
-     * Vulnerable: cmd injection
+     * Vulnerable: xss injection
      */
-    public function vulnerablecmd2(): void
+    public function vulnerablexss1(): void
     {
         // Intentionally vulnerable for benchmarking
-        system("ping " . $_GET['host']);
+        print($_REQUEST['output']);
     }
 
-    /**
-     * Vulnerable: path injection
-     */
-    public function vulnerablepath3(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        require($_POST['module']);
-    }
-
-    public function safeMethod0(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    private function helper9(int $id): int
+    private function helper8(int $id): int
     {
         return $id * 2;
-    }
-
-    protected function validate8(string $input): bool
-    {
-        return strlen($input) > 0;
     }
 }

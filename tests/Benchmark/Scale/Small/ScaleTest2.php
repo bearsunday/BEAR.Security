@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Small;
 
 /**
  * Auto-generated scale test file
@@ -20,9 +20,24 @@ class ScaleTest2
         $this->pdo = new \PDO('sqlite::memory:');
     }
 
-    protected function validate0(string $input): bool
+    private function helper0(int $id): int
+    {
+        return $id * 2;
+    }
+
+    private function helper3(int $id): int
+    {
+        return $id * 2;
+    }
+
+    protected function validate1(string $input): bool
     {
         return strlen($input) > 0;
+    }
+
+    private function helper2(int $id): int
+    {
+        return $id * 2;
     }
 
     /**
@@ -31,21 +46,7 @@ class ScaleTest2
     public function vulnerablexss1(): void
     {
         // Intentionally vulnerable for benchmarking
-        print($_REQUEST['output']);
-    }
-
-    /**
-     * Vulnerable: sql injection
-     */
-    public function vulnerablesql0(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        $query = "SELECT * FROM users WHERE id = " . $_GET['id'];
-    }
-
-    private function helper2(int $id): int
-    {
-        return $id * 2;
+        echo $_GET['message'];
     }
 
     /**
@@ -57,25 +58,13 @@ class ScaleTest2
         require($_POST['module']);
     }
 
-    public function safeMethod1(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
     /**
-     * Vulnerable: cmd injection
+     * Vulnerable: sql injection
      */
-    public function vulnerablecmd2(): void
+    public function vulnerablesql0(): void
     {
         // Intentionally vulnerable for benchmarking
-        shell_exec("cat " . $_POST['file']);
-    }
-
-    public function safeMethod3(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+        $this->pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
     }
 
     /**
@@ -85,5 +74,14 @@ class ScaleTest2
     {
         // Intentionally vulnerable for benchmarking
         unserialize(base64_decode($_POST['obj']));
+    }
+
+    /**
+     * Vulnerable: cmd injection
+     */
+    public function vulnerablecmd2(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        exec("ls " . $_GET['path']);
     }
 }

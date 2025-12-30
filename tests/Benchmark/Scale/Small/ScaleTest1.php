@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Small;
 
 /**
  * Auto-generated scale test file
@@ -21,36 +21,15 @@ class ScaleTest1
     }
 
     /**
-     * Vulnerable: xss injection
+     * Vulnerable: deserialize injection
      */
-    public function vulnerablexss1(): void
+    public function vulnerabledeserialize4(): void
     {
         // Intentionally vulnerable for benchmarking
-        echo "<div>" . $_POST['content'] . "</div>";
-    }
-
-    /**
-     * Vulnerable: path injection
-     */
-    public function vulnerablepath3(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        include($_GET['page']);
+        unserialize(base64_decode($_POST['obj']));
     }
 
     public function safeMethod1(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    public function safeMethod2(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    public function safeMethod3(): void
     {
         $data = ['key' => 'value'];
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
@@ -65,13 +44,39 @@ class ScaleTest1
         system("ping " . $_GET['host']);
     }
 
+    public function safeMethod3(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
     /**
-     * Vulnerable: deserialize injection
+     * Vulnerable: xss injection
      */
-    public function vulnerabledeserialize4(): void
+    public function vulnerablexss1(): void
     {
         // Intentionally vulnerable for benchmarking
-        unserialize($_COOKIE['data']);
+        print($_REQUEST['output']);
+    }
+
+    public function safeMethod0(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    protected function validate2(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    /**
+     * Vulnerable: path injection
+     */
+    public function vulnerablepath3(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        require($_POST['module']);
     }
 
     /**
@@ -80,11 +85,6 @@ class ScaleTest1
     public function vulnerablesql0(): void
     {
         // Intentionally vulnerable for benchmarking
-        $query = "SELECT * FROM users WHERE id = " . $_GET['id'];
-    }
-
-    protected function validate0(string $input): bool
-    {
-        return strlen($input) > 0;
+        $this->pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
     }
 }

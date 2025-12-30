@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Medium;
 
 /**
  * Auto-generated scale test file
@@ -21,20 +21,6 @@ class ScaleTest41
     }
 
     /**
-     * Vulnerable: deserialize injection
-     */
-    public function vulnerabledeserialize4(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        unserialize(base64_decode($_POST['obj']));
-    }
-
-    protected function validate2(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    /**
      * Vulnerable: path injection
      */
     public function vulnerablepath3(): void
@@ -43,26 +29,18 @@ class ScaleTest41
         include($_GET['page']);
     }
 
-    private function helper0(int $id): int
+    private function helper7(int $id): int
     {
         return $id * 2;
     }
 
-    public function safeMethod8(): void
+    /**
+     * Vulnerable: deserialize injection
+     */
+    public function vulnerabledeserialize4(): void
     {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    public function safeMethod5(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    protected function validate3(string $input): bool
-    {
-        return strlen($input) > 0;
+        // Intentionally vulnerable for benchmarking
+        unserialize(base64_decode($_POST['obj']));
     }
 
     /**
@@ -71,43 +49,10 @@ class ScaleTest41
     public function vulnerablecmd2(): void
     {
         // Intentionally vulnerable for benchmarking
-        system("ping " . $_GET['host']);
-    }
-
-    private function helper4(int $id): int
-    {
-        return $id * 2;
-    }
-
-    /**
-     * Vulnerable: xss injection
-     */
-    public function vulnerablexss1(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        echo $_GET['message'];
-    }
-
-    /**
-     * Vulnerable: sql injection
-     */
-    public function vulnerablesql0(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        $query = "SELECT * FROM users WHERE id = " . $_GET['id'];
-    }
-
-    private function helper7(int $id): int
-    {
-        return $id * 2;
+        exec("ls " . $_GET['path']);
     }
 
     private function helper1(int $id): int
-    {
-        return $id * 2;
-    }
-
-    private function helper6(int $id): int
     {
         return $id * 2;
     }
@@ -116,5 +61,60 @@ class ScaleTest41
     {
         $data = ['key' => 'value'];
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    /**
+     * Vulnerable: xss injection
+     */
+    public function vulnerablexss1(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        print($_REQUEST['output']);
+    }
+
+    private function helper8(int $id): int
+    {
+        return $id * 2;
+    }
+
+    /**
+     * Vulnerable: sql injection
+     */
+    public function vulnerablesql0(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        $sql = "DELETE FROM items WHERE id = " . $_REQUEST['id'];
+    }
+
+    protected function validate2(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    public function safeMethod5(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    public function safeMethod6(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    private function helper3(int $id): int
+    {
+        return $id * 2;
+    }
+
+    protected function validate0(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    protected function validate4(string $input): bool
+    {
+        return strlen($input) > 0;
     }
 }

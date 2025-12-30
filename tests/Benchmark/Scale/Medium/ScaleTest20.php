@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BEAR\Security\Tests\Benchmark\Scale;
+namespace BEAR\Security\Tests\Benchmark\Scale\Medium;
 
 /**
  * Auto-generated scale test file
@@ -20,7 +20,76 @@ class ScaleTest20
         $this->pdo = new \PDO('sqlite::memory:');
     }
 
-    public function safeMethod9(): void
+    protected function validate3(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    public function safeMethod2(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    /**
+     * Vulnerable: xss injection
+     */
+    public function vulnerablexss1(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        echo $_GET['message'];
+    }
+
+    protected function validate5(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    public function safeMethod1(): void
+    {
+        $data = ['key' => 'value'];
+        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
+    }
+
+    /**
+     * Vulnerable: cmd injection
+     */
+    public function vulnerablecmd2(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        exec("ls " . $_GET['path']);
+    }
+
+    protected function validate0(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    private function helper6(int $id): int
+    {
+        return $id * 2;
+    }
+
+    /**
+     * Vulnerable: sql injection
+     */
+    public function vulnerablesql0(): void
+    {
+        // Intentionally vulnerable for benchmarking
+        $this->pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
+    }
+
+    private function helper7(int $id): int
+    {
+        return $id * 2;
+    }
+
+    protected function validate9(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
+    public function safeMethod4(): void
     {
         $data = ['key' => 'value'];
         $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
@@ -35,6 +104,11 @@ class ScaleTest20
         unserialize(base64_decode($_POST['obj']));
     }
 
+    protected function validate8(string $input): bool
+    {
+        return strlen($input) > 0;
+    }
+
     /**
      * Vulnerable: path injection
      */
@@ -42,80 +116,5 @@ class ScaleTest20
     {
         // Intentionally vulnerable for benchmarking
         require($_POST['module']);
-    }
-
-    /**
-     * Vulnerable: cmd injection
-     */
-    public function vulnerablecmd2(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        shell_exec("cat " . $_POST['file']);
-    }
-
-    /**
-     * Vulnerable: sql injection
-     */
-    public function vulnerablesql0(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        $pdo->query("SELECT * FROM orders WHERE user_id = " . $_POST['user']);
-    }
-
-    public function safeMethod7(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    private function helper5(int $id): int
-    {
-        return $id * 2;
-    }
-
-    public function safeMethod3(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    protected function validate6(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    protected function validate1(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    public function safeMethod2(): void
-    {
-        $data = ['key' => 'value'];
-        $result = array_map(fn($x) => $x * 2, [1, 2, 3]);
-    }
-
-    private function helper8(int $id): int
-    {
-        return $id * 2;
-    }
-
-    private function helper4(int $id): int
-    {
-        return $id * 2;
-    }
-
-    protected function validate0(string $input): bool
-    {
-        return strlen($input) > 0;
-    }
-
-    /**
-     * Vulnerable: xss injection
-     */
-    public function vulnerablexss1(): void
-    {
-        // Intentionally vulnerable for benchmarking
-        echo $_GET['message'];
     }
 }
