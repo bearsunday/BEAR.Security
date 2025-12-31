@@ -186,4 +186,102 @@ class FalsePositiveTest extends TestCase
 
         $this->assertNotEmpty($vulnerabilities);
     }
+
+    // =========================================================================
+    // @security-ignore comment suppression
+    // =========================================================================
+
+    public function testSecurityIgnoreAllTypes(): void
+    {
+        $detector = new DangerousFunctionDetector();
+        $code = <<<'PHP'
+<?php
+// @security-ignore
+shell_exec("ls -la");
+PHP;
+
+        $vulnerabilities = $detector->scan('test.php', $code);
+
+        $this->assertEmpty($vulnerabilities, '@security-ignore should suppress all types');
+    }
+
+    public function testSecurityIgnoreSpecificType(): void
+    {
+        $detector = new DangerousFunctionDetector();
+        $code = <<<'PHP'
+<?php
+// @security-ignore DANGEROUS_EXEC
+shell_exec("ls -la");
+PHP;
+
+        $vulnerabilities = $detector->scan('test.php', $code);
+
+        $execVulns = array_filter(
+            $vulnerabilities,
+            static fn (VulnerabilityInterface $v) => str_contains($v->getType(), 'DANGEROUS_EXEC'),
+        );
+
+        $this->assertEmpty($execVulns, '@security-ignore TYPE should suppress specific type');
+    }
+
+    public function testSecurityIgnoreWithReason(): void
+    {
+        $detector = new DangerousFunctionDetector();
+        $code = <<<'PHP'
+<?php
+// @security-ignore DANGEROUS_EXEC: This is a safe static command
+shell_exec("date +%Y-%m-%d");
+PHP;
+
+        $vulnerabilities = $detector->scan('test.php', $code);
+
+        $execVulns = array_filter(
+            $vulnerabilities,
+            static fn (VulnerabilityInterface $v) => str_contains($v->getType(), 'DANGEROUS_EXEC'),
+        );
+
+        $this->assertEmpty($execVulns, '@security-ignore TYPE: reason should work');
+    }
+
+    public function testSecurityIgnoreWrongTypeStillDetected(): void
+    {
+        $detector = new DangerousFunctionDetector();
+        $code = <<<'PHP'
+<?php
+// @security-ignore SQL_INJECTION
+shell_exec("ls -la");
+PHP;
+
+        $vulnerabilities = $detector->scan('test.php', $code);
+
+        $this->assertNotEmpty($vulnerabilities, 'Wrong type should not suppress');
+    }
+
+    public function testSecurityIgnoreOnSameLine(): void
+    {
+        $detector = new DangerousFunctionDetector();
+        $code = <<<'PHP'
+<?php
+shell_exec("ls -la"); // @security-ignore
+PHP;
+
+        $vulnerabilities = $detector->scan('test.php', $code);
+
+        // Same-line inline comment IS supported
+        $this->assertEmpty($vulnerabilities, '@security-ignore on same line should work');
+    }
+
+    public function testNoIgnoreCommentStillDetected(): void
+    {
+        $detector = new DangerousFunctionDetector();
+        $code = <<<'PHP'
+<?php
+// This is a regular comment
+shell_exec("ls -la");
+PHP;
+
+        $vulnerabilities = $detector->scan('test.php', $code);
+
+        $this->assertNotEmpty($vulnerabilities, 'Regular comment should not suppress');
+    }
 }

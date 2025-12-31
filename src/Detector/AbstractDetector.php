@@ -13,6 +13,7 @@ use function explode;
 use function implode;
 use function max;
 use function min;
+use function preg_match;
 use function preg_match_all;
 use function substr;
 use function substr_count;
@@ -36,10 +37,16 @@ abstract class AbstractDetector implements DetectorInterface
     public function scan(string $filePath, string $content): array
     {
         $vulnerabilities = [];
+        $lines = explode("\n", $content);
 
         foreach ($this->patterns as $type => $config) {
             $matches = $this->findMatches($content, $config['pattern']);
             foreach ($matches as $match) {
+                // Skip if @security-ignore comment is present
+                if ($this->isIgnored($lines, $match['line'], $type)) {
+                    continue;
+                }
+
                 $vulnerabilities[] = new Vulnerability(
                     $type,
                     $config['severity'],
@@ -107,5 +114,45 @@ abstract class AbstractDetector implements DetectorInterface
         $snippet = array_slice($lines, $start, $length);
 
         return trim(implode("\n", $snippet));
+    }
+
+    /**
+     * Check if a vulnerability is ignored by @security-ignore comment
+     *
+     * Supports:
+     * - // @security-ignore (ignores all types)
+     * - // @security-ignore TYPE (ignores specific type)
+     * - // @security-ignore TYPE: reason (with optional reason)
+     *
+     * @param string[] $lines
+     */
+    protected function isIgnored(array $lines, int $lineNumber, string $type): bool
+    {
+        // Check current line and previous line for @security-ignore
+        $linesToCheck = [$lineNumber - 1, $lineNumber - 2]; // 0-indexed: current and previous
+
+        foreach ($linesToCheck as $index) {
+            if ($index < 0 || ! isset($lines[$index])) {
+                continue;
+            }
+
+            $line = $lines[$index];
+
+            // Match @security-ignore with optional type
+            if (preg_match('/@security-ignore\s*(?:(\S+))?/', $line, $matches)) {
+                // No type specified = ignore all
+                if (! isset($matches[1]) || $matches[1] === '') {
+                    return true;
+                }
+
+                // Check if type matches (strip colon if present)
+                $ignoreType = rtrim($matches[1], ':');
+                if ($ignoreType === $type) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
