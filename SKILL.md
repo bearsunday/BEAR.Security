@@ -204,6 +204,27 @@ Hardcoded Secrets:
 | `md5()` | For cache keys, not passwords |
 | Placeholder strings | `YOUR_API_KEY_HERE`, `REPLACE_WITH_*` |
 
+#### False Positive Suppression
+
+Use `@security-ignore` comment on the **same line** (like `@phpstan-ignore-line`):
+
+```php
+// Suppress all types
+$cache->query($key); // @security-ignore
+
+// Suppress specific type
+shell_exec($cmd); // @security-ignore DANGEROUS_EXEC
+
+// With reason (recommended)
+shell_exec("date"); // @security-ignore DANGEROUS_EXEC: Static command
+```
+
+**Workflow**:
+1. Run SAST scan
+2. Review findings with AI
+3. Add `@security-ignore` for confirmed false positives
+4. Document reason for future maintainers
+
 ### What AI Can Do That Traditional Tools Cannot
 
 1. **Context Understanding**
