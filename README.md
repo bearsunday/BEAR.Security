@@ -52,6 +52,16 @@ vendor/bin/bear.security-scan src --format=checklist-html -o report.html
 vendor/bin/bear.security-scan src --exclude='/vendor/' --exclude='/tests/'
 ```
 
+### False Positive Suppression
+
+Use `@security-ignore` comment on the same line (like `@phpstan-ignore-line`):
+
+```php
+$cache->query($key); // @security-ignore
+shell_exec($cmd); // @security-ignore DANGEROUS_EXEC
+shell_exec("date"); // @security-ignore DANGEROUS_EXEC: Static command
+```
+
 ## OWASP Top 10 Coverage
 
 | Category | Detection |
