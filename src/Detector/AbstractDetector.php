@@ -119,7 +119,7 @@ abstract class AbstractDetector implements DetectorInterface
     /**
      * Check if a vulnerability is ignored by @security-ignore comment
      *
-     * Supports:
+     * Supports (same line only, like @phpstan-ignore-line):
      * - // @security-ignore (ignores all types)
      * - // @security-ignore TYPE (ignores specific type)
      * - // @security-ignore TYPE: reason (with optional reason)
@@ -128,28 +128,26 @@ abstract class AbstractDetector implements DetectorInterface
      */
     protected function isIgnored(array $lines, int $lineNumber, string $type): bool
     {
-        // Check current line and previous line for @security-ignore
-        $linesToCheck = [$lineNumber - 1, $lineNumber - 2]; // 0-indexed: current and previous
+        // Check same line only (0-indexed)
+        $index = $lineNumber - 1;
 
-        foreach ($linesToCheck as $index) {
-            if ($index < 0 || ! isset($lines[$index])) {
-                continue;
+        if ($index < 0 || ! isset($lines[$index])) {
+            return false;
+        }
+
+        $line = $lines[$index];
+
+        // Match @security-ignore with optional type
+        if (preg_match('/@security-ignore\s*(?:(\S+))?/', $line, $matches)) {
+            // No type specified = ignore all
+            if (! isset($matches[1]) || $matches[1] === '') {
+                return true;
             }
 
-            $line = $lines[$index];
-
-            // Match @security-ignore with optional type
-            if (preg_match('/@security-ignore\s*(?:(\S+))?/', $line, $matches)) {
-                // No type specified = ignore all
-                if (! isset($matches[1]) || $matches[1] === '') {
-                    return true;
-                }
-
-                // Check if type matches (strip colon if present)
-                $ignoreType = rtrim($matches[1], ':');
-                if ($ignoreType === $type) {
-                    return true;
-                }
+            // Check if type matches (strip colon if present)
+            $ignoreType = rtrim($matches[1], ':');
+            if ($ignoreType === $type) {
+                return true;
             }
         }
 

@@ -196,8 +196,7 @@ class FalsePositiveTest extends TestCase
         $detector = new DangerousFunctionDetector();
         $code = <<<'PHP'
 <?php
-// @security-ignore
-shell_exec("ls -la");
+shell_exec("ls -la"); // @security-ignore
 PHP;
 
         $vulnerabilities = $detector->scan('test.php', $code);
@@ -210,8 +209,7 @@ PHP;
         $detector = new DangerousFunctionDetector();
         $code = <<<'PHP'
 <?php
-// @security-ignore DANGEROUS_EXEC
-shell_exec("ls -la");
+shell_exec("ls -la"); // @security-ignore DANGEROUS_EXEC
 PHP;
 
         $vulnerabilities = $detector->scan('test.php', $code);
@@ -229,8 +227,7 @@ PHP;
         $detector = new DangerousFunctionDetector();
         $code = <<<'PHP'
 <?php
-// @security-ignore DANGEROUS_EXEC: This is a safe static command
-shell_exec("date +%Y-%m-%d");
+shell_exec("date +%Y-%m-%d"); // @security-ignore DANGEROUS_EXEC: Safe static command
 PHP;
 
         $vulnerabilities = $detector->scan('test.php', $code);
@@ -248,8 +245,7 @@ PHP;
         $detector = new DangerousFunctionDetector();
         $code = <<<'PHP'
 <?php
-// @security-ignore SQL_INJECTION
-shell_exec("ls -la");
+shell_exec("ls -la"); // @security-ignore SQL_INJECTION
 PHP;
 
         $vulnerabilities = $detector->scan('test.php', $code);
@@ -257,18 +253,19 @@ PHP;
         $this->assertNotEmpty($vulnerabilities, 'Wrong type should not suppress');
     }
 
-    public function testSecurityIgnoreOnSameLine(): void
+    public function testSecurityIgnorePreviousLineNotSupported(): void
     {
         $detector = new DangerousFunctionDetector();
         $code = <<<'PHP'
 <?php
-shell_exec("ls -la"); // @security-ignore
+// @security-ignore
+shell_exec("ls -la");
 PHP;
 
         $vulnerabilities = $detector->scan('test.php', $code);
 
-        // Same-line inline comment IS supported
-        $this->assertEmpty($vulnerabilities, '@security-ignore on same line should work');
+        // Previous line comment is NOT supported (same line only)
+        $this->assertNotEmpty($vulnerabilities, 'Previous line comment should not suppress');
     }
 
     public function testNoIgnoreCommentStillDetected(): void
@@ -276,8 +273,7 @@ PHP;
         $detector = new DangerousFunctionDetector();
         $code = <<<'PHP'
 <?php
-// This is a regular comment
-shell_exec("ls -la");
+shell_exec("ls -la"); // This is a regular comment
 PHP;
 
         $vulnerabilities = $detector->scan('test.php', $code);
