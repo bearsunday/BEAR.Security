@@ -10,7 +10,6 @@ namespace BEAR\Security\Fake;
  * Used to test false positive reduction. All patterns here are intentionally
  * safe and should pass without warnings.
  *
- * @phpstan-ignore-file
  * @psalm-suppress all
  */
 class SafeCode

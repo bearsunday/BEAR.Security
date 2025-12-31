@@ -6,6 +6,7 @@ parameters:
   excludePaths:
     - tests/Fixture/VulnerableApp/*
     - tests/Benchmark/*
+    - tests/Fake/SafeCode.php
     # EndpointDiscovery depends on bear/app-meta which is optional
     - src/Dast/EndpointDiscovery.php
   ignoreErrors:

@@ -40,7 +40,7 @@ abstract class AbstractDetector implements DetectorInterface
         $lines = explode("\n", $content);
 
         foreach ($this->patterns as $type => $config) {
-            $matches = $this->findMatches($content, $config['pattern']);
+            $matches = $this->findMatches($content, $config['pattern'], $lines);
             foreach ($matches as $match) {
                 // Skip if @security-ignore comment is present
                 if ($this->isIgnored($lines, $match['line'], $type)) {
@@ -65,9 +65,11 @@ abstract class AbstractDetector implements DetectorInterface
     /**
      * Find all pattern matches in content
      *
+     * @param string[] $lines
+     *
      * @return array<int, array{line: int, code: string}>
      */
-    protected function findMatches(string $content, string $pattern): array
+    protected function findMatches(string $content, string $pattern, array $lines): array
     {
         $matches = [];
         $result = preg_match_all($pattern, $content, $found, PREG_OFFSET_CAPTURE);
@@ -75,8 +77,6 @@ abstract class AbstractDetector implements DetectorInterface
         if ($result === false || $result === 0) {
             return [];
         }
-
-        $lines = explode("\n", $content);
 
         foreach ($found[0] as $match) {
             $offset = $match[1];
@@ -138,9 +138,9 @@ abstract class AbstractDetector implements DetectorInterface
         $line = $lines[$index];
 
         // Match @security-ignore with optional type
-        if (preg_match('/@security-ignore\s*(?:(\S+))?/', $line, $matches)) {
+        if (preg_match('/@security-ignore(?:\s+(\S+))?/', $line, $matches)) {
             // No type specified = ignore all
-            if (! isset($matches[1]) || $matches[1] === '') {
+            if (! isset($matches[1])) {
                 return true;
             }
 
