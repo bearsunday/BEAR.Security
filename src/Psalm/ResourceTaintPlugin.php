@@ -36,7 +36,7 @@ class ResourceTaintPlugin implements PluginEntryPointInterface
             }
         }
 
-        require_once __DIR__ . '/ResourceTaintHandler.php';
+        class_exists(ResourceTaintHandler::class);
         $registration->registerHooksFromClass(ResourceTaintHandler::class);
     }
 }
