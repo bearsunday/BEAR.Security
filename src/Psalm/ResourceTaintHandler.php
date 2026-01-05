@@ -45,9 +45,7 @@ class ResourceTaintHandler implements AfterFunctionLikeAnalysisInterface
 
         // Check if class extends ResourceObject
         if (!$codebase->classExtends($class_name, 'BEAR\Resource\ResourceObject')) {
-            if ($class_name !== 'BEAR\Resource\ResourceObject') {
-                return null;
-            }
+            return null;
         }
 
         // Check if class matches configured targets (Page/App)
