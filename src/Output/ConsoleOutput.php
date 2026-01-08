@@ -8,8 +8,9 @@ use BEAR\Security\ScanResult;
 use BEAR\Security\VulnerabilityInterface;
 
 use function implode;
-use function preg_replace;
 use function sprintf;
+use function str_replace;
+use function str_starts_with;
 use function strtolower;
 use function strtoupper;
 
@@ -144,13 +145,38 @@ final class ConsoleOutput implements OutputInterface
         return $output;
     }
 
-    /** Convert vulnerability type to URL slug (e.g., "SqlInjection" -> "sql-injection") */
+    /** Convert vulnerability type to URL slug (e.g., "SQL_INJECTION_DIRECT_VARIABLE" -> "sql-injection") */
     private function typeToSlug(string $type): string
     {
-        // Insert hyphen before uppercase letters, then lowercase
-        $slug = (string) preg_replace('/([a-z])([A-Z])/', '$1-$2', $type);
+        // Convert SCREAMING_SNAKE_CASE to lowercase with hyphens
+        $slug = strtolower(str_replace('_', '-', $type));
 
-        return strtolower($slug);
+        // Known vulnerability prefixes (matching documentation slugs)
+        $prefixes = [
+            'sql-injection',
+            'command-injection',
+            'xss',
+            'path-traversal',
+            'remote-file-inclusion',
+            'csrf',
+            'cryptographic-failures',
+            'insecure-deserialization',
+            'dangerous-function',
+            'session-security',
+            'open-redirect',
+            'xxe',
+            'header-injection',
+            'weak-random',
+        ];
+
+        foreach ($prefixes as $prefix) {
+            if (str_starts_with($slug, $prefix)) {
+                return $prefix;
+            }
+        }
+
+        // Fallback: return the full converted slug
+        return $slug;
     }
 
     private function formatSeverityLabel(string $severity): string
