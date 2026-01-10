@@ -2,7 +2,7 @@
 
 Security scanner for BEAR.Sunday applications with OWASP Top 10 compliance.
 
-[![Build Status](https://github.com/bearsunday/BEAR.Security/workflows/CI/badge.svg)](https://github.com/bearsunday/BEAR.Security/actions)
+[![Taint Analysis](https://github.com/bearsunday/BEAR.Security/actions/workflows/taint-analysis.yml/badge.svg)](https://github.com/bearsunday/BEAR.Security/actions/workflows/taint-analysis.yml)
 
 ## Features
 
