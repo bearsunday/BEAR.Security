@@ -58,15 +58,15 @@ BEAR.Security provides comprehensive security analysis for BEAR.Sunday applicati
 vendor/bin/bear.security-scan src
 
 # JSON (CI/CD)
-vendor/bin/bear.security-scan src --format=json
+vendor/bin/bear.security-scan src --format json
 
 # SARIF (GitHub Security)
-vendor/bin/bear.security-scan src --format=sarif
+vendor/bin/bear.security-scan src --format sarif
 
 # OWASP Checklist
-vendor/bin/bear.security-scan src --format=checklist
-vendor/bin/bear.security-scan src --format=checklist-html
-vendor/bin/bear.security-scan src --format=checklist-json
+vendor/bin/bear.security-scan src --format checklist
+vendor/bin/bear.security-scan src --format checklist-html
+vendor/bin/bear.security-scan src --format checklist-json
 ```
 
 ## Architecture
@@ -123,7 +123,7 @@ class CustomDetector extends AbstractDetector
 
 ```yaml
 - name: Security Scan
-  run: vendor/bin/bear.security-scan src --format=sarif > results.sarif
+  run: vendor/bin/bear.security-scan src --format sarif > results.sarif
 
 - uses: github/codeql-action/upload-sarif@v3
   with:

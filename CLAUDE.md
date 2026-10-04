@@ -51,15 +51,15 @@ composer cs-fix               # Fix
 vendor/bin/bear.security-scan src
 
 # Generate SARIF output for GitHub Security
-vendor/bin/bear.security-scan src --format=sarif > report.sarif
+vendor/bin/bear.security-scan src --format sarif > report.sarif
 
 # Generate OWASP Top 10 checklist
-vendor/bin/bear.security-scan src --format=checklist
-vendor/bin/bear.security-scan src --format=checklist-html -o report.html
-vendor/bin/bear.security-scan src --format=checklist-json > checklist.json
+vendor/bin/bear.security-scan src --format checklist
+vendor/bin/bear.security-scan src --format checklist-html -o report.html
+vendor/bin/bear.security-scan src --format checklist-json > checklist.json
 
 # Exclude patterns
-vendor/bin/bear.security-scan src --exclude='/vendor/' --exclude='/tests/'
+vendor/bin/bear.security-scan src --exclude '/vendor/' --exclude '/tests/'
 ```
 
 ### AI Audit (requires ANTHROPIC_API_KEY)
@@ -68,8 +68,8 @@ vendor/bin/bear.security-scan src --exclude='/vendor/' --exclude='/tests/'
 ANTHROPIC_API_KEY=sk-xxx vendor/bin/bear-security-audit src
 
 # Output formats
-vendor/bin/bear-security-audit src --format=json
-vendor/bin/bear-security-audit src --format=sarif --output=results.sarif
+vendor/bin/bear-security-audit src --format json
+vendor/bin/bear-security-audit src --format sarif --output=results.sarif
 ```
 
 ### Build and Maintenance

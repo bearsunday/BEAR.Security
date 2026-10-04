@@ -109,13 +109,13 @@ Vulnerabilities requiring context understanding:
 
 ```yaml
 - name: SAST Scan
-  run: vendor/bin/bear.security-scan src --format=sarif > sast.sarif
+  run: vendor/bin/bear.security-scan src --format sarif > sast.sarif
 
 - name: AI Audit (Release only)
   if: github.event_name == 'release'
   env:
     ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-  run: vendor/bin/bear-security-audit src --format=sarif > ai-audit.sarif
+  run: vendor/bin/bear-security-audit src --format sarif > ai-audit.sarif
 ```
 
 ---

@@ -36,20 +36,20 @@ vendor/bin/bear.security-scan src
 vendor/bin/bear.security-scan src
 
 # JSON for CI/CD
-vendor/bin/bear.security-scan src --format=json > report.json
+vendor/bin/bear.security-scan src --format json > report.json
 
 # SARIF for GitHub Security
-vendor/bin/bear.security-scan src --format=sarif > report.sarif
+vendor/bin/bear.security-scan src --format sarif > report.sarif
 
 # OWASP Top 10 Checklist
-vendor/bin/bear.security-scan src --format=checklist
-vendor/bin/bear.security-scan src --format=checklist-html -o report.html
+vendor/bin/bear.security-scan src --format checklist
+vendor/bin/bear.security-scan src --format checklist-html -o report.html
 ```
 
 ### Exclude Patterns
 
 ```bash
-vendor/bin/bear.security-scan src --exclude='/vendor/' --exclude='/tests/'
+vendor/bin/bear.security-scan src --exclude '/vendor/' --exclude '/tests/'
 ```
 
 ### False Positive Suppression
@@ -142,10 +142,10 @@ vendor/bin/bear-security-audit src
 vendor/bin/bear-security-audit src
 
 # JSON output
-vendor/bin/bear-security-audit src --format=json
+vendor/bin/bear-security-audit src --format json
 
 # SARIF for GitHub Security
-vendor/bin/bear-security-audit src --format=sarif --output=results.sarif
+vendor/bin/bear-security-audit src --format sarif --output=results.sarif
 ```
 
 ### DAST (Dynamic Analysis)
@@ -223,7 +223,7 @@ jobs:
       - name: Security Scan
         run: |
           composer require --dev bear/security
-          vendor/bin/bear.security-scan src --format=sarif > results.sarif
+          vendor/bin/bear.security-scan src --format sarif > results.sarif
 
       - name: Upload to GitHub Security
         uses: github/codeql-action/upload-sarif@v3

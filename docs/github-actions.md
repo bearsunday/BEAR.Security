@@ -26,7 +26,7 @@ jobs:
       - name: Security Scan
         run: |
           composer require --dev bear/security
-          vendor/bin/bear.security-scan src --format=sarif > results.sarif
+          vendor/bin/bear.security-scan src --format sarif > results.sarif
 
       - name: Upload to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
@@ -63,7 +63,7 @@ jobs:
       - name: Security Scan
         run: |
           composer require --dev bear/security
-          vendor/bin/bear.security-scan src --format=checklist
+          vendor/bin/bear.security-scan src --format checklist
 ```
 
 ## Full Configuration
@@ -93,8 +93,8 @@ jobs:
       - name: Run Security Scanner
         run: |
           composer require --dev bear/security
-          vendor/bin/bear.security-scan src --format=json > report.json
-          vendor/bin/bear.security-scan src --format=checklist-html > report.html
+          vendor/bin/bear.security-scan src --format json > report.json
+          vendor/bin/bear.security-scan src --format checklist-html > report.html
 
       - name: Fail on Critical
         run: |
@@ -158,7 +158,7 @@ jobs:
       - name: DAST Scan
         run: |
           composer require --dev bear/security
-          vendor/bin/bear.security-scan --dast http://localhost:8080 --format=json
+          vendor/bin/bear.security-scan --dast http://localhost:8080 --format json
 ```
 
 ## Severity Threshold

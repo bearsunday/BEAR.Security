@@ -156,10 +156,10 @@ Comparison of BEAR.Security (with AI Auditor) against enterprise-grade security 
 ```yaml
 # Every push
 - composer audit
-- vendor/bin/bear.security-scan src --format=sarif
+- vendor/bin/bear.security-scan src --format sarif
 
 # Release only (cost optimization)
-- vendor/bin/bear-security-audit src --format=sarif
+- vendor/bin/bear-security-audit src --format sarif
 ```
 
 ---
