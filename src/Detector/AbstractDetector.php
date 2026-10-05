@@ -119,7 +119,7 @@ abstract class AbstractDetector implements DetectorInterface
     /**
      * Check if a vulnerability is ignored by @security-ignore comment
      *
-     * Supports (same line only, like @phpstan-ignore-line):
+     * Supports (same line only, similar in spirit to PHPStan's inline ignore comments):
      * - // @security-ignore (ignores all types)
      * - // @security-ignore TYPE (ignores specific type)
      * - // @security-ignore TYPE: reason (with optional reason)
