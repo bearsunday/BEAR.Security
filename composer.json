@@ -53,7 +53,7 @@
         "cs": "phpcs",
         "cs-fix": "phpcbf src tests",
         "phpstan": "phpstan analyse -c phpstan.neon",
-        "psalm": "psalm --show-info=false",
+        "psalm": "psalm --show-info=false src",
         "taint": "psalm --taint-analysis demo/src",
         "phpmd": "phpmd src text ./phpmd.xml",
         "baseline": "phpstan analyse -c phpstan.neon --generate-baseline --allow-empty-baseline && psalm --set-baseline=psalm-baseline.xml",
@@ -115,6 +115,8 @@
         "allow-plugins": {
             "bamarni/composer-bin-plugin": true,
             "infection/extension-installer": true
+        },
+        "platform": {
         }
     },
     "extra": {

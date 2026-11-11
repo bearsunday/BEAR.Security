@@ -55,9 +55,8 @@ class ResourceTaintHandler implements AfterFunctionLikeAnalysisInterface
         $cased_method_id = $class_name . '::' . $method_name;
 
         foreach (array_keys($storage->params) as $offset) {
-            // getForMethodArgument() without a specialization location returns the same
-            // unspecialized node the method body itself uses for this parameter, so the
-            // source we register here connects to the flow already built for the body.
+            // Without a specialization location, this is the same unspecialized node the
+            // method body itself uses for the parameter, so the source connects to its flow.
             $source = DataFlowNode::getForMethodArgument($cased_method_id, $offset, $storage)
                 ->setTaints(TaintKind::ALL_INPUT);
             $codebase->taint_flow_graph->addSource($source);
