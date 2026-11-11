@@ -24,7 +24,7 @@
         <pluginClass class="BEAR\Security\Psalm\ResourceTaintPlugin"/>
     </plugins>
     <issueHandlers>
-        <!-- PHP 8.3+ feature, not required for PHP 8.1 minimum -->
+        <!-- PHP 8.3+ feature, not required for PHP 8.2 minimum -->
         <MissingOverrideAttribute errorLevel="suppress" />
         <!-- Pattern strings are validated at runtime -->
         <ArgumentTypeCoercion>

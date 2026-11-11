@@ -287,6 +287,6 @@ Release: + AI analysis (deep, thorough)
 
 ## Requirements
 
-- PHP 8.1+
+- PHP 8.2+
 - BEAR.Sunday application (recommended)
 - Psalm (for taint analysis)

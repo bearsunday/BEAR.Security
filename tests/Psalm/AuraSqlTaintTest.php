@@ -19,6 +19,7 @@ use function preg_match_all;
 class AuraSqlTaintTest extends TestCase
 {
     private const PSALM_BIN = __DIR__ . '/../../vendor/bin/psalm';
+    private const PSALM_CONFIG = __DIR__ . '/../../psalm-demo.xml';
     private const VULNERABLE_FILE = __DIR__ . '/../../demo/src/Resource/App/Vulnerable/AuraSqlInjection.php';
     private const VULNERABLE_EDGE_CASES = __DIR__ . '/../../demo/src/Resource/App/Vulnerable/AuraSqlEdgeCases.php';
     private const SAFE_FILE = __DIR__ . '/../../demo/src/Resource/App/Safe/AuraSqlPrepared.php';
@@ -165,8 +166,9 @@ class AuraSqlTaintTest extends TestCase
     {
         $output = [];
         $command = sprintf(
-            '%s --threads=1 --taint-analysis --no-cache %s 2>&1',
+            '%s --threads=1 --taint-analysis --no-cache -c %s %s 2>&1',
             escapeshellarg(self::PSALM_BIN),
+            escapeshellarg(self::PSALM_CONFIG),
             escapeshellarg($file)
         );
 

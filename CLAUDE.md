@@ -278,7 +278,7 @@ This scanner is optimized for BEAR.Sunday applications:
 
 ## Requirements
 
-- PHP 8.1+ (strict types enforced)
+- PHP 8.2+ (strict types enforced)
 - No runtime dependencies for SAST
 - ANTHROPIC_API_KEY for AI Audit
 - BEAR.Sunday + bear/devtools for DAST (optional)

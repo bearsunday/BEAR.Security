@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace BEAR\Security\Psalm;
 
 use Psalm\Internal\DataFlow\DataFlowNode;
-use Psalm\Internal\DataFlow\TaintSource;
 use Psalm\Plugin\EventHandler\AfterFunctionLikeAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterFunctionLikeAnalysisEvent;
 use Psalm\Storage\MethodStorage;
-use Psalm\Type\TaintKindGroup;
+use Psalm\Type\TaintKind;
 
+use function array_keys;
 use function str_contains;
 use function str_starts_with;
-use function strtolower;
 
 class ResourceTaintHandler implements AfterFunctionLikeAnalysisInterface
 {
@@ -53,23 +52,14 @@ class ResourceTaintHandler implements AfterFunctionLikeAnalysisInterface
             return null;
         }
 
-        $method_id = $class_name . '::' . $method_name;
-        $cased_method_id = $method_id;
+        $cased_method_id = $class_name . '::' . $method_name;
 
-        foreach ($storage->params as $offset => $param) {
-            $arg_id = strtolower($method_id) . '#' . ($offset + 1);
-            $label = $cased_method_id . '#' . ($offset + 1);
-
-            $node = new DataFlowNode(
-                $arg_id,
-                $label,
-                $param->location,
-                null,
-                TaintKindGroup::ALL_INPUT
-            );
-
-            $taint_source = TaintSource::fromNode($node);
-            $codebase->taint_flow_graph->addSource($taint_source);
+        foreach (array_keys($storage->params) as $offset) {
+            // Without a specialization location, this is the same unspecialized node the
+            // method body itself uses for the parameter, so the source connects to its flow.
+            $source = DataFlowNode::getForMethodArgument($cased_method_id, $offset, $storage)
+                ->setTaints(TaintKind::ALL_INPUT);
+            $codebase->taint_flow_graph->addSource($source);
         }
 
         return null;
