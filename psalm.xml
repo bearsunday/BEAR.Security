@@ -31,7 +31,6 @@
             <errorLevel type="suppress">
                 <referencedFunction name="preg_match" />
                 <referencedFunction name="preg_match_all" />
-                <file name="demo/src/Bootstrap.php" />
             </errorLevel>
         </ArgumentTypeCoercion>
         <!-- Callable type is validated -->
@@ -80,8 +79,6 @@
         <ForbiddenCode>
             <errorLevel type="suppress">
                 <file name="src/Ai/ClaudeCliAdapter.php" />
-                <!-- Intentional for the demo; exec() is the vulnerability being demonstrated -->
-                <file name="demo/src/Resource/App/Vulnerable/ShellInjection.php" />
             </errorLevel>
         </ForbiddenCode>
         <!-- Psalm plugin classes -->
@@ -106,81 +103,5 @@
                 <file name="src/Psalm/ResourceTaintPlugin.php" />
             </errorLevel>
         </RedundantCondition>
-        <!--
-            Demo app (demo/src): illustrates patterns, some depending on packages that are only
-            suggested (twig/twig, ray/media-query), not installed. Psalm 7 is stricter than Psalm 6
-            about the resulting mixed/undefined types here; none of this affects taint analysis,
-            which is checked by tests/Psalm/AuraSqlTaintTest.php and .github/workflows/taint-analysis.yml.
-        -->
-        <UndefinedClass>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </UndefinedClass>
-        <MixedArrayAssignment>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </MixedArrayAssignment>
-        <MixedReturnTypeCoercion>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </MixedReturnTypeCoercion>
-        <MixedFunctionCall>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </MixedFunctionCall>
-        <MixedMethodCall>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </MixedMethodCall>
-        <InvalidArgument>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </InvalidArgument>
-        <MixedReturnStatement>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </MixedReturnStatement>
-        <NonInvariantPropertyType>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </NonInvariantPropertyType>
-        <NonInvariantDocblockPropertyType>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </NonInvariantDocblockPropertyType>
-        <OverriddenPropertyAccess>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </OverriddenPropertyAccess>
-        <MissingConstructor>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </MissingConstructor>
-        <PossiblyFalseArgument>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </PossiblyFalseArgument>
-        <PossiblyFalseOperand>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </PossiblyFalseOperand>
-        <PossiblyFalseReference>
-            <errorLevel type="suppress">
-                <directory name="demo/src" />
-            </errorLevel>
-        </PossiblyFalseReference>
     </issueHandlers>
 </psalm>

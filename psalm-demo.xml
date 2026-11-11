@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="1"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    findUnusedCode="false"
+>
+    <projectFiles>
+        <directory name="demo/src" />
+        <ignoreFiles>
+            <!-- App bootstrap/DI wiring, not part of the taint demonstration. They use
+                 bear/package and koriym/env-json, which this repo never installs (not even
+                 as a suggestion), so Psalm can only see them as undefined. -->
+            <file name="demo/src/Bootstrap.php" />
+            <file name="demo/src/Injector.php" />
+            <file name="demo/src/Module/AppModule.php" />
+        </ignoreFiles>
+    </projectFiles>
+    <stubs>
+        <file name="stubs/PDO.phpstub"/>
+        <file name="stubs/AuraSql.phpstub"/>
+        <file name="stubs/Qiq.phpstub"/>
+    </stubs>
+    <plugins>
+        <pluginClass class="BEAR\Security\Psalm\ResourceTaintPlugin"/>
+    </plugins>
+    <issueHandlers>
+        <!-- Intentional for the demo; exec() is the vulnerability being demonstrated -->
+        <ForbiddenCode>
+            <errorLevel type="suppress">
+                <file name="demo/src/Resource/App/Vulnerable/ShellInjection.php" />
+            </errorLevel>
+        </ForbiddenCode>
+        <!-- These files document that they require a package the demo only mentions, never
+             installs (ray/media-query, madapaja/twig-module); the resulting UndefinedClass is
+             expected. Any other file hitting this means a real missing dependency or typo. -->
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <file name="demo/src/Resource/App/Safe/SqlPrepared.php" />
+                <file name="demo/src/Resource/App/Safe/TwigEscaped.php" />
+            </errorLevel>
+        </UndefinedClass>
+        <!--
+            The rest of this file: Psalm 7 is stricter than Psalm 6 about mixed/invariance/falsy
+            type checks the demo's loosely-typed illustrative code triggers. None of this is
+            taint-related; it does not affect which parameters are sources or which calls are
+            sinks, so it cannot hide a taint regression.
+        -->
+        <MixedArrayAssignment>
+            <errorLevel type="suppress">
+                <directory name="demo/src" />
+            </errorLevel>
+        </MixedArrayAssignment>
+        <MixedReturnTypeCoercion>
+            <errorLevel type="suppress">
+                <directory name="demo/src" />
+            </errorLevel>
+        </MixedReturnTypeCoercion>
+        <NonInvariantPropertyType>
+            <errorLevel type="suppress">
+                <directory name="demo/src" />
+            </errorLevel>
+        </NonInvariantPropertyType>
+        <NonInvariantDocblockPropertyType>
+            <errorLevel type="suppress">
+                <directory name="demo/src" />
+            </errorLevel>
+        </NonInvariantDocblockPropertyType>
+        <OverriddenPropertyAccess>
+            <errorLevel type="suppress">
+                <directory name="demo/src" />
+            </errorLevel>
+        </OverriddenPropertyAccess>
+        <MissingConstructor>
+            <errorLevel type="suppress">
+                <directory name="demo/src" />
+            </errorLevel>
+        </MissingConstructor>
+        <PossiblyFalseArgument>
+            <errorLevel type="suppress">
+                <directory name="demo/src" />
+            </errorLevel>
+        </PossiblyFalseArgument>
+        <PossiblyFalseOperand>
+            <errorLevel type="suppress">
+                <directory name="demo/src" />
+            </errorLevel>
+        </PossiblyFalseOperand>
+        <PossiblyFalseReference>
+            <errorLevel type="suppress">
+                <directory name="demo/src" />
+            </errorLevel>
+        </PossiblyFalseReference>
+    </issueHandlers>
+</psalm>
