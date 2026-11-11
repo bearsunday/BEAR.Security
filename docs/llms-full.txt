@@ -7,7 +7,7 @@
 - Name: bear/security
 - Namespace: BEAR\Security
 - License: MIT
-- PHP: ^8.1
+- PHP: ^8.2
 - Repository: https://github.com/bearsunday/BEAR.Security
 
 ## Architecture
@@ -194,7 +194,7 @@ bear/security/
 ## Dependencies
 
 Required:
-- PHP ^8.1
+- PHP ^8.2
 
 Dev:
 - phpunit/phpunit

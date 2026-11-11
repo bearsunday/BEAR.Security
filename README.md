@@ -216,7 +216,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
 
       - run: composer install --no-interaction
 
@@ -311,7 +311,7 @@ See [Psalm Taint Plugin](docs/psalm-taint-plugin.md) for configuration and detai
 
 ## Requirements
 
-- PHP 8.1+
+- PHP 8.2+
 - BEAR.Sunday application (recommended)
 
 ## Documentation
