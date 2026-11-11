@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - `bear/security` now requires `vimeo/psalm` 7.3 or later; the Psalm 6 taint internals it used (`Psalm\Internal\DataFlow\TaintSource`, `Psalm\Type\TaintKindGroup`) are gone in Psalm 7. Projects still on Psalm 6 should upgrade first with `composer require --dev vimeo/psalm:^7.3 -W`.
+- `bear/security` now requires PHP 8.2 or later.
+- `bear/security` now also rejects `vimeo/psalm` 8.0 and later (only Psalm 7.x is supported); the plugin uses Psalm internals that are expected to change again in Psalm 8.
 
 ## [0.3.0] - 2026-01-06
 

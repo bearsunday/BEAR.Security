@@ -35,7 +35,10 @@
         </ForbiddenCode>
         <!-- These files document that they require a package the demo only mentions, never
              installs (ray/media-query, madapaja/twig-module); the resulting UndefinedClass is
-             expected. Any other file hitting this means a real missing dependency or typo. -->
+             expected. Any other file hitting this means a real missing dependency or typo.
+             Limit: with the sink package uninstalled, Psalm cannot see it, so the taint result
+             for these two files is not a verification (concatenated SQL passed through an
+             uninstalled SqlQueryInterface reports no taint either way). -->
         <UndefinedClass>
             <errorLevel type="suppress">
                 <file name="demo/src/Resource/App/Safe/SqlPrepared.php" />

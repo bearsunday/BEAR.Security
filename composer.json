@@ -10,17 +10,17 @@
         }
     ],
     "require": {
-        "php": "^8.1"
+        "php": "^8.2",
+        "composer-runtime-api": "^2.0"
     },
     "conflict": {
-        "vimeo/psalm": "<7.3"
+        "vimeo/psalm": "<7.3 || >=8.0"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.8",
-        "phpunit/phpunit": "^10.5",
-        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^10.5.62",
+        "phpstan/phpstan": "^2.1.29",
         "vimeo/psalm": "^7.3",
-        "psalm/psalm-plugin-api": "^0.4",
         "infection/infection": "^0.31.9",
         "bear/resource": "^1.28",
         "aura/sql": "^6.0",

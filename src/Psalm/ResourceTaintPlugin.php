@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace BEAR\Security\Psalm;
 
+use Composer\InstalledVersions;
 use LogicException;
-use Psalm\Internal\VersionUtils;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
 
+use function preg_match;
 use function sprintf;
-use function strtok;
 use function version_compare;
 
 /**
@@ -32,10 +32,21 @@ class ResourceTaintPlugin implements PluginEntryPointInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {
-        // composer's conflict cannot reach a Psalm installed in a separate project such as vendor-bin
-        $psalmVersion = (string) strtok(VersionUtils::getPsalmVersion(), '@');
-        if (version_compare($psalmVersion, '7.3.0', '<')) {
-            throw new LogicException(sprintf('bear/security requires Psalm 7.3 or later, including a Psalm installed under vendor-bin; found %s.', $psalmVersion));
+        // Read through Composer's runtime API (not Psalm\Internal\VersionUtils) so a moved or
+        // renamed Psalm internal cannot break this guard; works for a Psalm installed under
+        // vendor-bin too, since each generated autoloader registers itself with InstalledVersions.
+        $psalmVersion = InstalledVersions::getPrettyVersion('vimeo/psalm');
+        // A dev build (`dev-master`, `7.x-dev@<hash>`) or an unresolvable version is not
+        // comparable; skip the guard rather than reject it on a false reading.
+        if ($psalmVersion !== null && preg_match('/^(\d+\.\d+\.\d+)/', $psalmVersion, $matches) === 1) {
+            $numericVersion = $matches[1];
+            if (version_compare($numericVersion, '7.3.0', '<')) {
+                throw new LogicException(sprintf('bear/security requires Psalm 7.3 or later, including a Psalm installed under vendor-bin; found %s.', $psalmVersion));
+            }
+
+            if (version_compare($numericVersion, '8.0.0', '>=')) {
+                throw new LogicException(sprintf('bear/security supports Psalm 7.x only, including a Psalm installed under vendor-bin; found %s.', $psalmVersion));
+            }
         }
 
         if ($config !== null && isset($config->targets->target)) {
