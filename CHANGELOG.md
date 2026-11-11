@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- `bear/security` now requires `vimeo/psalm` 7.3 or later; the Psalm 6 taint internals it used (`Psalm\Internal\DataFlow\TaintSource`, `Psalm\Type\TaintKindGroup`) are gone in Psalm 7. Projects still on Psalm 6 should upgrade first with `composer require --dev vimeo/psalm:^7.3 -W`.
+
 ## [0.3.0] - 2026-01-06
 
 ### Added

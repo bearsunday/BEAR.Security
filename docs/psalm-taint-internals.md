@@ -15,8 +15,8 @@ The plugin hooks into Psalm's analysis phase and manually registers method param
 1. Implements `AfterFunctionLikeAnalysisInterface` to hook into method analysis
 2. Checks if class extends `BEAR\Resource\ResourceObject` via `classExtends()`
 3. Filters methods starting with `on` (onGet, onPost, onPut, onPatch, onDelete)
-4. Creates `DataFlowNode` with `TaintKindGroup::ALL_INPUT` for each parameter
-5. Registers `TaintSource` via `taint_flow_graph->addSource()`
+4. Builds the method's own (unspecialized) parameter node via `DataFlowNode::getForMethodArgument()` and sets `TaintKind::ALL_INPUT` on it with `setTaints()`
+5. Registers the node as a source via `taint_flow_graph->addSource()`
 
 ## Key Classes
 
@@ -25,12 +25,11 @@ The plugin hooks into Psalm's analysis phase and manually registers method param
 
 ## Node ID Format
 
-Psalm requires specific node ID format for taint tracking:
-
-```php
-$arg_id = strtolower($method_id) . '#' . ($offset + 1);
-// e.g., "myvendor\myapp\resource\app\user::onget#1"
-```
+`DataFlowNode::getForMethodArgument($cased_method_id, $offset, $storage)` (no specialization location)
+returns the same unspecialized node id Psalm itself uses for the parameter inside the method body,
+e.g. `myvendor\myapp\resource\app\user::onget#1`. Registering a source under any other id (for
+example one built from a `CodeLocation`, which Psalm specializes per call site) never connects to
+that body and silently detects nothing.
 
 ## Configuration
 
